@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-plugin-boilerplate",
-	"version": "1.0.0",
-	"description": "This is a boilerplate setup for Obsidian plugin development using typescript, scss, vite and biome (https://obsidian.md)",
+	"name": "rpg-player-notes-plugin",
+	"version": "0.1.0",
+	"description": "This is a simple plugin for RPG players who like to take notes during sessions. Currently it adds a command to create new notes of various types, using the selected text as a title (or specifying a title if no text is selected) and put them into predefined folders.",
 	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
@@ -12,7 +12,15 @@
 		"lint:fix": "pnpm exec biome check --write"
 	},
 	"keywords": [],
-	"author": "",
+	"author": {
+		"name": "Roy W. Andersen",
+		"email": "ensnared@gmail.com",
+		"url": "https://github.com/NorseJedi"
+	},
+	"bugs": {
+		"url": "https://github.com/NorseJedi/rpg-player-notes-plugin/issues"
+	},
+	"homepage": "https://github.com/NorseJedi/rpg-player-notes-plugin",
 	"license": "MIT",
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.5",

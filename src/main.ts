@@ -1,5 +1,6 @@
-import { App, DropdownComponent, Editor, FuzzySuggestModal, MarkdownFileInfo, MarkdownView, Modal, Notice, normalizePath, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
-import { ensureFolderExists } from '@/helpers';
+import { App, Editor, FuzzySuggestModal, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian';
+import { createCompendiumNote } from '@/create-note';
+import { NOTE_TYPES } from '@/note-types';
 import { TextPromptModal } from '@/prompts';
 import { DEFAULT_SETTINGS, RpgPlayerNotesSettings, RpgPlayerNotesSettingsTab } from '@/settings';
 import { registerDevTools } from './devtools';
@@ -18,7 +19,7 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 		this.addCommand({
 			id: 'rpgplayernotes-create-new-note',
 			name: 'Create New RPG Player Note',
-			editorCallback: async (editor: Editor, view: MarkdownView) => {
+			editorCallback: async (editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
 				let title: string | null = editor.getSelection().trim();
 				let replaceSelection = true;
 
@@ -37,7 +38,7 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 
 				if (title) {
 					new NoteTypeSelectModal(this.app, async (type) => {
-						await this.createCompendiumNote(editor, view, title, type, replaceSelection);
+						await createCompendiumNote(this, editor, ctx, title, type, replaceSelection);
 					}).open();
 				}
 			}
@@ -67,51 +68,6 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
-
-	createCompendiumNote = async (editor: Editor, view: MarkdownView, title: string, type: NoteType, replaceSelection: boolean) => {
-		const currentFile = view.file;
-		if (!currentFile) return;
-
-		const vault = this.app.vault;
-
-		// Find the top-level folder under vault root for the current note
-		const parts = currentFile.path.split('/');
-		if (parts.length < 2) {
-			new Notice('Note is in root; cannot determine base folder.');
-			return;
-		}
-		const topFolder = parts[0];
-
-		// Construct the new note path relative to the top folder
-		const relativeFolder = this.settings.paths[type];
-		const newFolderPath = normalizePath(`${topFolder}/${relativeFolder}`);
-		const newNotePath = normalizePath(`${newFolderPath}/${title}.md`);
-
-		// Ensure the folder exists
-		await ensureFolderExists(this.app.vault, newFolderPath);
-
-		// Create the new note
-		if (!(await vault.adapter.exists(newNotePath))) {
-			await vault.create(newNotePath, '');
-		}
-
-		if (replaceSelection) {
-			// Replace selection with link
-			editor.replaceSelection(`[[${title}]]`);
-		} else {
-			const cursor = editor.getCursor();
-			editor.replaceRange(`[[${title}]]`, cursor);
-		}
-
-		new Notice(`Created ${type} note: ${title}`);
-
-		const newFile = vault.getAbstractFileByPath(newNotePath);
-		if (newFile instanceof TFile) {
-			const newLeaf = this.app.workspace.getLeaf(true);
-			await newLeaf.openFile(newFile);
-			this.app.workspace.setActiveLeaf(newLeaf, { focus: true });
-		}
-	};
 }
 
 type NoteType = keyof RpgPlayerNotesSettings['paths'];
@@ -125,7 +81,7 @@ class NoteTypeSelectModal extends FuzzySuggestModal<NoteType> {
 	}
 
 	getItems(): NoteType[] {
-		return ['person', 'location', 'creature', 'event'];
+		return NOTE_TYPES;
 	}
 
 	getItemText(item: NoteType): string {
