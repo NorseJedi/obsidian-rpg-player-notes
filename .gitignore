@@ -1,0 +1,17 @@
+# WebStorm/PhpStorm/Intellij
+.idea
+
+# vscode
+.vscode
+
+# Duh! I mean, can you imagine if people started putting their node_modules on Github? It would run out of space in seconds!
+node_modules
+
+# Don't include the dist folder
+dist
+
+# Exclude sourcemaps
+*.map
+
+# obsidian
+data.json
