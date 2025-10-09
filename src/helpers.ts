@@ -1,4 +1,4 @@
-import { normalizePath, TFile, Vault, WorkspaceLeaf } from 'obsidian';
+import { normalizePath, Setting, TFile, ToggleComponent, Vault, WorkspaceLeaf } from 'obsidian';
 import RpgPlayerNotesPlugin from '@/main';
 
 export const ensureFolderExists = async (vault: Vault, folderPath: string): Promise<void> => {
@@ -43,4 +43,40 @@ export const openFileAccordingToSettings = async (plugin: RpgPlayerNotesPlugin, 
 
 String.prototype.toTitleCase = function (): string {
 	return this.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+};
+
+/**
+ * Binds a toggle control to show/hide another Setting row.
+ * @param toggle The toggle element (from addToggle)
+ * @param targetSetting The Setting whose visibility should change
+ * @param initialValue Optional initial toggle value (used on render)
+ */
+export const bindVisibilityToToggle = (toggle: ToggleComponent, targetSetting: Setting, initialValue?: boolean) => {
+	const updateVisibility = (visible: boolean) => {
+		targetSetting.settingEl.style.display = visible ? '' : 'none';
+	};
+
+	// Apply initial visibility
+	updateVisibility(initialValue ?? toggle.getValue());
+
+	// React to toggle changes
+	toggle.onChange(updateVisibility);
+};
+
+/**
+ * Adds a toggle to a Setting and returns the ToggleComponent.
+ * Simplifies capturing the instance for later use.
+ */
+export const addToggleAndReturn = (setting: Setting, initialValue: boolean, onChange: (value: boolean) => void): ToggleComponent => {
+	let toggleRef: ToggleComponent | undefined;
+
+	setting.addToggle((toggle) => {
+		toggleRef = toggle;
+		toggle.setValue(initialValue).onChange(onChange);
+	});
+
+	if (!toggleRef) {
+		throw new Error('addToggleAndReturn: ToggleComponent was not created!');
+	}
+	return toggleRef;
 };

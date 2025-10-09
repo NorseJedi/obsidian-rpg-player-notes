@@ -1,4 +1,5 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
+import { addToggleAndReturn, bindVisibilityToToggle } from '@/helpers';
 import RpgPlayerNotesPlugin from '@/main';
 import { NOTE_TYPES, NoteType } from '@/note-types';
 import { SplitDirection } from '@/types/types';
@@ -14,13 +15,13 @@ export const DEFAULT_SETTINGS: RpgPlayerNotesSettings = {
 		(acc, type) => {
 			let folder = 'Compendium/';
 			switch (type) {
-				case 'person':
+				case 'Person/NPC':
 					folder += 'People';
 					break;
-				case 'creature':
+				case 'Creature':
 					folder += 'Beastiary';
 					break;
-				case 'location':
+				case 'Location':
 					folder += 'Places';
 					break;
 				default:
@@ -51,9 +52,9 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 		new Setting(containerEl).setName('RPG Player Notes Settings').setHeading();
 
 		for (const type of NOTE_TYPES) {
-			new Setting(containerEl).setName(type.toTitleCase()).addText((text) =>
+			new Setting(containerEl).setName(type).addText((text) =>
 				text
-					.setPlaceholder(`Folder for ${type.toTitleCase()} notes`)
+					.setPlaceholder(`Folder for ${type} notes`)
 					.setValue(this.plugin.settings.paths[type])
 					.onChange(async (value) => {
 						this.plugin.settings.paths[type] = value.trim();
@@ -62,25 +63,17 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 			);
 		}
 
-		new Setting(containerEl)
-			.setName('Open new note after creation')
-			.setDesc('Automatically open the new note once it’s created.')
-			.addToggle((toggle) =>
-				toggle.setValue(this.plugin.settings.openNoteAfterCreation).onChange(async (value) => {
-					this.plugin.settings.openNoteAfterCreation = value;
-					await this.plugin.saveSettings();
-
-					// Show or hide the split direction setting
-					splitSetting.setDisabled(!value);
-					splitSetting.settingEl.style.display = value ? '' : 'none';
-				})
-			);
+		const openSetting = new Setting(containerEl).setName('Open new note after creation').setDesc('Automatically open the new note once it’s created.');
+		const openToggle = addToggleAndReturn(openSetting, this.plugin.settings.openNoteAfterCreation, async (value) => {
+			this.plugin.settings.openNoteAfterCreation = value;
+			await this.plugin.saveSettings();
+		});
 
 		const splitSetting = new Setting(containerEl)
 			.setName('Split direction')
 			.setDesc('Choose where the note opens: same tab, vertical split, or horizontal split.')
 			.addDropdown((dropdown) => {
-				NOTE_TYPES;
+				//				NOTE_TYPES;
 				dropdown
 					.addOption('same', 'Same tab group')
 					.addOption('vertical', 'Vertical split')
@@ -92,8 +85,6 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 					});
 			});
 
-		if (!this.plugin.settings.openNoteAfterCreation) {
-			splitSetting.settingEl.style.display = 'none';
-		}
+		bindVisibilityToToggle(openToggle, splitSetting, this.plugin.settings.openNoteAfterCreation);
 	}
 }

@@ -1,2 +1,2 @@
-export type NoteType = 'person' | 'location' | 'item' | 'creature' | 'event' | 'group';
-export const NOTE_TYPES: NoteType[] = ['person', 'location', 'item', 'creature', 'event', 'group'];
+export type NoteType = 'Person/NPC' | 'Location' | 'Item' | 'Creature' | 'Event' | 'Group';
+export const NOTE_TYPES: NoteType[] = ['Person/NPC', 'Location', 'Item', 'Creature', 'Event', 'Group'];
