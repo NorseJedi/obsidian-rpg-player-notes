@@ -2,13 +2,14 @@
 
 This is a plugin for [Obsidian.md](https://obsidian.md/) with some simple utilities for RPG players for taking notes during game sessions.
 
-Currently it has a single command - Create New RPG Player Note - which works like this:
+Currently, it has a single command – Create New RPG Player Note – which works like this:
 * If you select a text and run the command, it will set the selected text as the title/filename of the new note.
   * If you run it without selecting text, you will be prompted for a title.
-* Next you will be able to select from a list of note types (person, location, item, event, etc.), and this will determine the folder for the new note.
-  * The folder locations are set in the plugin settings.
+* Next, you will be able to select from a list of note types, and this will determine the folder for the new note.
+  * The note types and folders are configurable in the plugin settings.
+  * Paths can be either relative to the top-level folder of the active note or absolute.
 
-The idea is that you have a vault where you take all your notes from gaming sessions, where each campaign is a folder on the top level. You can then set these notes to be created in subdirectories under this folder. Personally I like to have my structure like this:
+The idea is that you have a vault where you take all your notes from gaming sessions, where each campaign is a folder on the top level. You can then set these notes to be created in subdirectories under this folder. I personally like to have my structure something like this:
 ```
 Root
 ├── DnD Dark Sun
@@ -49,9 +50,9 @@ Root
 │
 ...etc
 ```
-With this plugin, I've set all new notes of type "Person" to be created in `Compendium/People`, "Event" in `Compendium/Events`, etc. so when I'm writing the note for the current session, my new notes are always put in the right compendium for the campaign. All the folders can be customized, it's only the basic structure in that the folders you specify are relative to the top level folder of the note you are on when creating a new note.
+With this plugin, I've set all new notes of type "Person" to be created in `Compendium/People`, "Event" in `Compendium/Events`, etc. so when I'm writing the note for the current session, my new notes are always put in the right compendium for the campaign.
 
-In time I'll probably add more features and options as I find the need, but for now this is all I need to get started. Feel free to suggest features or contribute code, and of course, report bugs.
+In time, I'll probably add more features and options as I find the need, but for now this is all I need to get started. Feel free to suggest features or contribute code, and of course, report bugs.
 
 # Contributing
 ## Getting Started
