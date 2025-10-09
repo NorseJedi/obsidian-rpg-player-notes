@@ -1,6 +1,6 @@
 {
 	"name": "rpg-player-notes-plugin",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "This is a simple plugin for RPG players who like to take notes during sessions. Currently it adds a command to create new notes of various types, using the selected text as a title (or specifying a title if no text is selected) and put them into predefined folders, all configurable in the plugin settings.",
 	"main": "dist/main.js",
 	"type": "module",

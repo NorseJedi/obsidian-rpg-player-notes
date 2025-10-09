@@ -23,7 +23,7 @@ export const DEFAULT_SETTINGS: RpgPlayerNotesSettings = {
 	noteTypes: [
 		{ id: 'person', label: 'Person', path: 'Compendium/People' },
 		{ id: 'location', label: 'Location', path: 'Compendium/Locations' },
-		{ id: 'item', label: 'Item', path: 'Items' },
+		{ id: 'item', label: 'Item', path: 'Compendium/Items' },
 		{ id: 'creature', label: 'Creature', path: 'Compendium/Creatures' },
 		{ id: 'event', label: 'Event', path: 'Compendium/Events' },
 		{ id: 'group', label: 'Group', path: 'Compendium/Groups' }
