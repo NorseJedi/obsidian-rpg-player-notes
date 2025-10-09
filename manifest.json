@@ -3,7 +3,7 @@
 	"name": "RPG Player Notes Utilities",
 	"version": "0.2.1",
 	"minAppVersion": "1.9.0",
-	"description": "A simple plugin for RPG players who like to take notes during game sessions. It adds a command to create new notes of various types, using the selected text as a title (or specifying a title if no text is selected) and put them into predefined folders. Types and folders can be customized by the user.",
+	"description": "Adds a command to create new notes of various predefined types, using the selected text as a title and putting them into predefined folders based on the type. Types and folders can be customized by the user.",
 	"author": "Roy W. Andersen",
 	"authorUrl": "https://github.com/NorseJedi",
 	"license": "MIT",
