@@ -1,7 +1,6 @@
-import { App, Editor, FuzzySuggestModal, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian';
+import { Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian';
 import { createCompendiumNote } from '@/create-note';
-import { NOTE_TYPES } from '@/note-types';
-import { TextPromptModal } from '@/prompts';
+import { NoteTypeSelectModal, TextPromptModal } from '@/prompts';
 import { DEFAULT_SETTINGS, RpgPlayerNotesSettings, RpgPlayerNotesSettingsTab } from '@/settings';
 import { registerDevTools } from './devtools';
 
@@ -37,7 +36,7 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 				}
 
 				if (title) {
-					new NoteTypeSelectModal(this.app, async (type) => {
+					new NoteTypeSelectModal(this.app, this.settings.noteTypes, async (type) => {
 						await createCompendiumNote(this, editor, ctx, title, type, replaceSelection);
 					}).open();
 				}
@@ -47,7 +46,7 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new RpgPlayerNotesSettingsTab(this.app, this));
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
+		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin),
 		// Using this function will automatically remove the event listener when this plugin is disabled.
 		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
 			console.log('click', evt);
@@ -67,28 +66,5 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-}
-
-type NoteType = keyof RpgPlayerNotesSettings['paths'];
-
-class NoteTypeSelectModal extends FuzzySuggestModal<NoteType> {
-	constructor(
-		app: App,
-		private onSelect: (type: NoteType) => void
-	) {
-		super(app);
-	}
-
-	getItems(): NoteType[] {
-		return NOTE_TYPES;
-	}
-
-	getItemText(item: NoteType): string {
-		return item;
-	}
-
-	onChooseItem(item: NoteType): void {
-		this.onSelect(item);
 	}
 }

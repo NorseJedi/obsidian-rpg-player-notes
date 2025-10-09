@@ -1,4 +1,5 @@
 import { normalizePath, Setting, TFile, ToggleComponent, Vault, WorkspaceLeaf } from 'obsidian';
+import { REPLACEMENT_TOKENS } from '@/constants/tokens';
 import RpgPlayerNotesPlugin from '@/main';
 
 export const ensureFolderExists = async (vault: Vault, folderPath: string): Promise<void> => {
@@ -41,9 +42,9 @@ export const openFileAccordingToSettings = async (plugin: RpgPlayerNotesPlugin, 
 	}
 };
 
-String.prototype.toTitleCase = function (): string {
-	return this.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
-};
+//export const toTitleCase = (str: string): string => {
+//	return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+//};
 
 /**
  * Binds a toggle control to show/hide another Setting row.
@@ -79,4 +80,11 @@ export const addToggleAndReturn = (setting: Setting, initialValue: boolean, onCh
 		throw new Error('addToggleAndReturn: ToggleComponent was not created!');
 	}
 	return toggleRef;
+};
+
+export const replaceTokens = (str: string): string => {
+	for (const t of REPLACEMENT_TOKENS) {
+		str = str.replaceAll(t.token, t.replace());
+	}
+	return str;
 };

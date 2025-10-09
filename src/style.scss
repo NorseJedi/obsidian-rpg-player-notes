@@ -1,1 +1,15 @@
-* {}
+dl > dt > dd {
+	margin-bottom: .5rem;
+}
+
+.setting-item-control {
+	place-self: start;
+}
+
+table {
+	th {
+		text-align: left;
+		font-weight: bold;
+	}
+	border-spacing: .5rem;
+}

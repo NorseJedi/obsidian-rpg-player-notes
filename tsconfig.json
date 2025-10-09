@@ -16,8 +16,8 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"obsidian-typings/implementations": [
-				"./node_modules/obsidian-typings/dist/esm/implementations.d.mts",
-				"./node_modules/obsidian-typings/dist/esm/implementations.mjs"
+				"./node_modules/obsidian-typings/dist/implementations.d.ts",
+				"./node_modules/obsidian-typings/dist/implementations.cjs"
 			]
 		},
 		"lib": [
@@ -29,11 +29,13 @@
 			"ES2024"
 		],
 		"types": [
-			"obsidian",
-			"obsidian-typings"
+			"node",
+			"obsidian-typings",
+			"obsidian"
 		]
 	},
 	"include": [
-		"**/*.ts"
+		"**/*.ts",
+		"**/*.d.ts"
 	]
 }

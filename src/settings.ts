@@ -1,39 +1,33 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
+import { NoteTypeEditModal } from '@/edit-node-type';
 import { addToggleAndReturn, bindVisibilityToToggle } from '@/helpers';
 import RpgPlayerNotesPlugin from '@/main';
-import { NOTE_TYPES, NoteType } from '@/note-types';
-import { SplitDirection } from '@/types/types';
+
+export type SplitDirection = 'same' | 'vertical' | 'horizontal';
+
+export interface NoteType {
+	id: string; // unique key (e.g. "person")
+	label: string; // Display label (e.g. "Person")
+	path: string; // Foler path relative to top level folder
+}
 
 export interface RpgPlayerNotesSettings {
-	paths: Record<NoteType, string>;
 	openNoteAfterCreation: boolean;
 	splitDirection: SplitDirection;
+	noteTypes: NoteType[];
 }
 
 export const DEFAULT_SETTINGS: RpgPlayerNotesSettings = {
-	paths: NOTE_TYPES.reduce(
-		(acc, type) => {
-			let folder = 'Compendium/';
-			switch (type) {
-				case 'Person/NPC':
-					folder += 'People';
-					break;
-				case 'Creature':
-					folder += 'Beastiary';
-					break;
-				case 'Location':
-					folder += 'Places';
-					break;
-				default:
-					folder += type.toTitleCase() + 's'; // default folder = plural of type
-			}
-			acc[type] = folder;
-			return acc;
-		},
-		{} as Record<NoteType, string>
-	),
 	openNoteAfterCreation: true,
-	splitDirection: 'same'
+	splitDirection: 'same',
+	noteTypes: [
+		{ id: 'person', label: 'Person', path: 'Compendium/People' },
+		{ id: 'location', label: 'Location', path: 'Compendium/Locations' },
+		{ id: 'item', label: 'Item', path: 'Items' },
+		{ id: 'creature', label: 'Creature', path: 'Compendium/Creatures' },
+		{ id: 'event', label: 'Event', path: 'Compendium/Events' },
+		{ id: 'group', label: 'Group', path: 'Compendium/Groups' }
+	]
 };
 
 export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
@@ -50,18 +44,6 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl).setName('RPG Player Notes Settings').setHeading();
-
-		for (const type of NOTE_TYPES) {
-			new Setting(containerEl).setName(type).addText((text) =>
-				text
-					.setPlaceholder(`Folder for ${type} notes`)
-					.setValue(this.plugin.settings.paths[type])
-					.onChange(async (value) => {
-						this.plugin.settings.paths[type] = value.trim();
-						await this.plugin.saveSettings();
-					})
-			);
-		}
 
 		const openSetting = new Setting(containerEl).setName('Open new note after creation').setDesc('Automatically open the new note once it’s created.');
 		const openToggle = addToggleAndReturn(openSetting, this.plugin.settings.openNoteAfterCreation, async (value) => {
@@ -86,5 +68,52 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 			});
 
 		bindVisibilityToToggle(openToggle, splitSetting, this.plugin.settings.openNoteAfterCreation);
+
+		new Setting(containerEl).setName('Note Types').setHeading();
+
+		this.plugin.settings.noteTypes.forEach((type, index) => {
+			const typeSetting = new Setting(containerEl).setName(`${type.label}`).setDesc(`Path: ${type.path}`);
+
+			typeSetting.addButton((btn) =>
+				btn
+					.setIcon('edit')
+					.setTooltip('Edit note type')
+					.onClick(() => this.openEditModal(index))
+			);
+
+			typeSetting.addButton((btn) =>
+				btn
+					.setIcon('trash')
+					.setTooltip('Delete note type')
+					.setWarning()
+					.onClick(async () => {
+						this.plugin.settings.noteTypes.splice(index, 1);
+						await this.plugin.saveSettings();
+						this.display(); // refresh
+					})
+			);
+		});
+
+		new Setting(containerEl).addButton((btn) =>
+			btn
+				.setIcon('plus')
+				.setTooltip('Add new note type')
+				.setCta()
+				.onClick(() => this.openEditModal())
+		);
+	}
+
+	private openEditModal(index?: number) {
+		const { noteTypes } = this.plugin.settings;
+		const existing = index != null ? noteTypes[index] : { id: '', label: '', path: '' };
+
+		const modal = new NoteTypeEditModal(this.app, existing, async (updated) => {
+			if (index != null) noteTypes[index] = updated;
+			else noteTypes.push(updated);
+			await this.plugin.saveSettings();
+			this.display();
+		});
+
+		modal.open();
 	}
 }

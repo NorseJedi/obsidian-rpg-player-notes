@@ -42,13 +42,13 @@ export default defineConfig(async ({ mode }) => {
 			lib: {
 				entry: resolve(__dirname, 'src/main.ts'),
 				name: 'main',
-				fileName: () => 'main.js',
+				//				fileName: () => 'main.js',
 				formats: ['cjs']
 			},
 			minify: prod,
 			sourcemap: prod ? false : 'inline',
 			cssCodeSplit: false,
-			emptyOutDir: true,
+			emptyOutDir: mode !== 'development',
 			outDir: 'dist',
 			rollupOptions: {
 				input: {
