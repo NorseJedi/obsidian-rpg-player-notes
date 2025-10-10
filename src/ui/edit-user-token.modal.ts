@@ -34,7 +34,7 @@ export class UserTokenModal extends Modal {
 		new Setting(contentEl)
 			.setName('Replacement')
 			.setClass('align-items-flex-start')
-			.setDesc('A JavaScript function that returns a string which will replace the token. Example: "return btoa(Math.random().toString()).slice(2, 14);" for 12 random characters.')
+			.setDesc('A JavaScript expression which will replace the token. This function will be called with return, and it must return a string. Example: "btoa(Math.random().toString()).slice(2, 14)" for 12 random characters.')
 			.addTextArea((text) => {
 				text.setValue(this.token.js)
 					.setPlaceholder('')

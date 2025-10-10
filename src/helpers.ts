@@ -32,7 +32,7 @@ export const getAllTokens = (settings: RpgPlayerNotesSettings) => {
 			description: t.description,
 			replace: () => {
 				try {
-					const fn = new Function(t.js);
+					const fn = new Function(`return ${t.js};`);
 					return String(fn());
 				} catch (e) {
 					console.error(`Error evaluating user token "${t.token}":`, e);

@@ -1,4 +1,4 @@
-import { Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath } from 'obsidian';
+import { Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath, TFile, Vault } from 'obsidian';
 import { NoteType } from './constants/note-type';
 import { ensureFolderExists, openFileAccordingToSettings, replaceTokens } from './helpers';
 import RpgPlayerNotesPlugin from './main';
@@ -31,19 +31,19 @@ export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor:
 	await ensureFolderExists(plugin.app.vault, targetFolder);
 
 	// Create the new note
-	if (!(await vault.adapter.exists(newNotePath))) {
-		await vault.create(newNotePath, '');
-	}
+	const _ = vault.getFileByPath(newNotePath) ?? (await vault.create(newNotePath, ''));
+
+	const link = normalizePath(`${targetFolder}/${title}|${title}`);
 
 	if (replaceSelection) {
 		// Replace selection with a link
-		editor.replaceSelection(`[[${title}]]`);
+		editor.replaceSelection(`[[${link}]]`);
 	} else {
 		const cursor = editor.getCursor();
-		editor.replaceRange(`[[${title}]]`, cursor);
+		editor.replaceRange(`[[${link}]]`, cursor);
 	}
 
-	new Notice(`Created ${type} note: ${title}`);
+	new Notice(`Created ${type.label} note "${title}" in ${targetFolder}`);
 
 	if (plugin.settings.openNoteAfterCreation) {
 		await openFileAccordingToSettings(plugin, newNotePath);

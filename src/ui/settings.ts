@@ -2,8 +2,8 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import { SplitDirection } from '../constants/split-direction';
 import { addToggleAndReturn, bindVisibilityToToggle } from '../helpers';
 import RpgPlayerNotesPlugin from '../main';
-import { NoteTypeEditModal } from './edit-note-type';
-import { UserTokenModal } from './edit-user-tokens';
+import { NoteTypeEditModal } from './edit-note-type.modal';
+import { UserTokenModal } from './edit-user-token.modal';
 
 export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 	plugin: RpgPlayerNotesPlugin;

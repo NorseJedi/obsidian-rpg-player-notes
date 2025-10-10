@@ -1,4 +1,4 @@
-# RPG Player Notes Utilities for Obsidian.md
+# RPG Player Notes Plugin for Obsidian.md
 
 This is a plugin for [Obsidian.md](https://obsidian.md/) with some simple utilities for RPG players for taking notes during game sessions.
 
@@ -8,11 +8,14 @@ Currently, it has a single command – Create New RPG Player Note – which work
 * Next, you will be able to select from a list of note types, and this will determine the folder for the new note.
   * The note types and folders are configurable in the plugin settings.
   * Paths can be either relative to the top-level folder of the active note or absolute.
+  * Some tokens are defined that will be replaced with various date information.
+  * Additional tokens can be defined in the plugin settings.
+
 
 The idea is that you have a vault where you take all your notes from gaming sessions, where each campaign is a folder on the top level. You can then set these notes to be created in subdirectories under this folder. I personally like to have my structure something like this:
 ```
 Root
-├── DnD Dark Sun
+├── Dark Sun 2E
 │   ├── Compendium
 │   │   ├── Events
 │   │   │   └── (notes)
@@ -51,6 +54,23 @@ Root
 ...etc
 ```
 With this plugin, I've set all new notes of type "Person" to be created in `Compendium/People`, "Event" in `Compendium/Events`, etc. so when I'm writing the note for the current session, my new notes are always put in the right compendium for the campaign.
+
+### Tokens
+There are some tokens defined by default, which are replaced with various date information.
+| Token | Replacement |
+| ----- | ----------- |
+| `{DATE}` | The current date in ISO-8601 format (YYYY-MM-DD) |
+| `{YEAR}`: | The current year (YYYY) |
+| `{MONTH}`: | The current numeric month (no leading zero) |
+| `{DAY}`: | The current day of the month (no leading zero) |
+| `{DAYFULL}`: | Name of the current day, in english |
+| `{DAYSHORT}`: | Short name of the current day, in english |
+| `{MONTHFULL}`: | Name of the current month, in english |
+| `{MONTHSHORT}`: | Short name of the current month, in english |
+| `{WEEK}`: | The current week number according to ISO-8601 |
+
+In addition, you can define your own tokens in the plugin settings. You set the token word (without the `{` and `}`) and a JavaScript expression that will be evaluated to get the replacement. This expression must return a string.
+
 
 In time, I'll probably add more features and options as I find the need, but for now this is all I need to get started. Feel free to suggest features or contribute code, and of course, report bugs.
 
