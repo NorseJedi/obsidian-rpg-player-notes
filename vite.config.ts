@@ -25,7 +25,7 @@ export default defineConfig(async ({ mode }) => {
 					const src = resolve(__dirname, './manifest.json');
 					const dest = resolve(__dirname, 'dist/manifest.json');
 					if (mode === 'development') {
-						copyFileSync(resolve(__dirname, 'src/.hotreload'), resolve(__dirname, 'dist/.hotreload'));
+						copyFileSync(resolve(__dirname, 'src/devel/.hotreload'), resolve(__dirname, 'dist/.hotreload'));
 						console.log('✅ [DEVMODE] Copied .hotreload to dist/');
 					}
 					copyFileSync(src, dest);

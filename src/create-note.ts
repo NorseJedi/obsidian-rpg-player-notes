@@ -1,7 +1,7 @@
 import { Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath } from 'obsidian';
-import { ensureFolderExists, openFileAccordingToSettings, replaceTokens } from '@/helpers';
-import RpgPlayerNotesPlugin from '@/main';
-import { NoteType } from '@/settings';
+import { NoteType } from './constants/note-type';
+import { ensureFolderExists, openFileAccordingToSettings, replaceTokens } from './helpers';
+import RpgPlayerNotesPlugin from './main';
 
 export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor: Editor, ctx: MarkdownView | MarkdownFileInfo, title: string, type: NoteType, replaceSelection: boolean) => {
 	const vault = plugin.app.vault;
@@ -23,7 +23,7 @@ export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor:
 	}
 
 	// Replace predefined tokens in the folder name
-	targetFolder = replaceTokens(targetFolder);
+	targetFolder = replaceTokens(targetFolder, plugin.settings);
 
 	const newNotePath = normalizePath(`${targetFolder}/${title}.md`);
 

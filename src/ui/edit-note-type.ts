@@ -1,22 +1,30 @@
-import { App, Modal, Notice, Setting } from 'obsidian';
-import { REPLACEMENT_TOKENS } from '@/constants/tokens';
-import { NoteType } from '@/settings';
+import { Modal, Notice, Setting } from 'obsidian';
+import { NoteType } from '../constants/note-type';
+import RpgPlayerNotesPlugin from '../main';
+import { buildPathDescriptionFragment } from './ui-helpers';
 
 export class NoteTypeEditModal extends Modal {
 	private temp: NoteType;
 	private onSave: (type: NoteType) => void;
 
-	constructor(app: App, type: NoteType, onSave: (type: NoteType) => void) {
-		super(app);
+	constructor(
+		private plugin: RpgPlayerNotesPlugin,
+		type: NoteType,
+		onSave: (type: NoteType) => void
+	) {
+		super(plugin.app);
 		this.temp = { ...type };
 		this.onSave = onSave;
 	}
 
 	onOpen() {
 		const { contentEl } = this;
+
 		contentEl.empty();
 
-		contentEl.createEl('h2', { text: this.temp.id ? 'Edit Note Type' : 'Add Note Type' });
+		const pathDescr = buildPathDescriptionFragment(this.plugin);
+
+		new Setting(contentEl).setName(this.temp.id ? 'Edit note type' : 'New note type').setHeading();
 
 		new Setting(contentEl)
 			.setName('ID')
@@ -61,25 +69,3 @@ export class NoteTypeEditModal extends Modal {
 		this.contentEl.empty();
 	}
 }
-
-// biome-ignore lint/correctness/noUndeclaredVariables: Just biome being difficult...
-const pathDescr = createFragment((frag: DocumentFragment) => {
-	frag.createEl('p', { text: 'Folder where new notes of this type will be saved.' });
-	frag.createEl('p', {
-		text: 'If the path starts with a forward slash (/), it will be interpreted as an absolute path starting from the vault root. If not, it will be relative to the top folder of the currently active note.'
-	});
-	frag.createEl('p', { text: 'Some tokens are available for auto substitution:' });
-
-	const table = frag.createEl('table');
-	const thead = table.createEl('thead');
-	const headerRow = thead.createEl('tr');
-	headerRow.createEl('th', { text: 'Token' });
-	headerRow.createEl('th', { text: 'Replaced by' });
-
-	const tbody = table.createEl('tbody');
-	for (const t of REPLACEMENT_TOKENS) {
-		const row = tbody.createEl('tr');
-		row.createEl('td', { text: t.token });
-		row.createEl('td', { text: t.description });
-	}
-});

@@ -1,6 +1,7 @@
 import { normalizePath, Setting, TFile, ToggleComponent, Vault, WorkspaceLeaf } from 'obsidian';
-import { REPLACEMENT_TOKENS } from '@/constants/tokens';
-import RpgPlayerNotesPlugin from '@/main';
+import { RpgPlayerNotesSettings } from './constants/rpg-player-notes-settings';
+import { BUILTIN_TOKENS } from './constants/tokens';
+import RpgPlayerNotesPlugin from './main';
 
 export const ensureFolderExists = async (vault: Vault, folderPath: string): Promise<void> => {
 	const adapter = vault.adapter;
@@ -22,6 +23,51 @@ export const ensureFolderExists = async (vault: Vault, folderPath: string): Prom
 	// Create this folder
 	await vault.createFolder(folderPath);
 };
+
+export const getAllTokens = (settings: RpgPlayerNotesSettings) => {
+	return [
+		...BUILTIN_TOKENS,
+		...settings.userTokens.map((t) => ({
+			token: `{${t.token}}`,
+			description: t.description,
+			replace: () => {
+				try {
+					const fn = new Function(t.js);
+					return String(fn());
+				} catch (e) {
+					console.error(`Error evaluating user token "${t.token}":`, e);
+					return '';
+				}
+			}
+		}))
+	];
+};
+
+export const replaceTokens = (path: string, settings: RpgPlayerNotesSettings): string => {
+	let result = path;
+	for (const t of getAllTokens(settings)) {
+		result = result.replaceAll(t.token, t.replace());
+	}
+	return result;
+};
+
+export function runUserTokenJS(js: string, context: Record<string, any> = {}): string {
+	try {
+		// Create a new function with only the context keys as arguments
+		const keys = Object.keys(context);
+		const values = Object.values(context);
+
+		// Wrap user code to always return a string
+		const fn = new Function(...keys, `"use strict"; ${js}`);
+
+		const result = fn(...values);
+
+		return String(result ?? '');
+	} catch (e) {
+		console.error('Error running user token JS:', e);
+		return '';
+	}
+}
 
 export const openFileAccordingToSettings = async (plugin: RpgPlayerNotesPlugin, filePath: string) => {
 	const noteFile = plugin.app.vault.getAbstractFileByPath(filePath);
@@ -81,10 +127,10 @@ export const addToggleAndReturn = (setting: Setting, initialValue: boolean, onCh
 	}
 	return toggleRef;
 };
-
-export const replaceTokens = (str: string): string => {
-	for (const t of REPLACEMENT_TOKENS) {
-		str = str.replaceAll(t.token, t.replace());
-	}
-	return str;
-};
+//
+//export const replaceTokens = (str: string): string => {
+//	for (const t of BUILTIN_TOKENS) {
+//		str = str.replaceAll(t.token, t.replace());
+//	}
+//	return str;
+//};

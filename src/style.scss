@@ -6,10 +6,46 @@ dl > dt > dd {
 	place-self: start;
 }
 
-table {
+.align-items-flex-start {
+	align-items: flex-start;
+}
+
+table.rpg-note-token-table {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: .5rem;
+	margin-top: 0.5em;
+	font-size: var(--font-ui-small);
+	border-radius: var(--radius-s);
+	overflow: hidden; // clip header bg to corners
+	tr {
+		&.rpg-row-even {
+			background-color: var(--background-secondary-alt);
+		}
+
+		&.rpg-row-odd {
+			background-color: var(--background-secondary);
+		}
+
+		&:hover {
+			background-color: var(--interactive-accent);
+		}
+		transition: background-color 0.1s ease-in-out;
+	}
+
 	th {
 		text-align: left;
-		font-weight: bold;
+		font-weight: 600;
+		padding: 4px 6px;
+		color: var(--text-normal);
+		border-bottom: 2px solid color-mix(in srgb, var(--interactive-accent) 60%, var(--background-primary-alt));
+		background-color: var(--background-primary-alt);
 	}
-	border-spacing: .5rem;
+	td {
+		padding: 4px 6px;
+		vertical-align: top;
+		&:first-child {
+			font-weight: 500;
+		}
+	}
 }

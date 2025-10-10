@@ -1,0 +1,2 @@
+This file is only here to be copied to the dist directory when running in development mode to trigger the hot reload module.
+See https://github.com/pjeby/hot-reload

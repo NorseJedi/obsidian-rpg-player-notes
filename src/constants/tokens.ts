@@ -1,10 +1,16 @@
 export interface ReplacementToken {
-	token: string; // e.g. "{DATE}"
-	description: string; // for table
-	replace: () => string; // function to generate replacement
+	token: string;
+	description: string;
+	replace: () => string;
 }
 
-export const REPLACEMENT_TOKENS: ReplacementToken[] = [
+export interface UserDefinedToken {
+	token: string;
+	description: string;
+	js: string;
+}
+
+export const BUILTIN_TOKENS: ReplacementToken[] = [
 	{
 		token: '{DATE}',
 		description: "Today's date as YYYY-MM-DD",
@@ -26,9 +32,24 @@ export const REPLACEMENT_TOKENS: ReplacementToken[] = [
 		replace: () => String(new Date().getDate())
 	},
 	{
-		token: '{DAYNAME}',
+		token: '{DAYFULL}',
 		description: 'Name of the current day in English',
 		replace: () => new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date())
+	},
+	{
+		token: '{DAYSHORT}',
+		description: 'Short name of the current day in English',
+		replace: () => new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(new Date())
+	},
+	{
+		token: '{MONTHFULL}',
+		description: 'Name of the current month in English',
+		replace: () => new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date())
+	},
+	{
+		token: '{MONTHSHORT}',
+		description: 'Short name of the current month in English',
+		replace: () => new Intl.DateTimeFormat('en-US', { month: 'short' }).format(new Date())
 	},
 	{
 		token: '{WEEK}',
@@ -44,7 +65,7 @@ const getWeekNumber = (date: Date): string => {
 	// ISO week date weeks start on Monday, so correct the day number
 	const dayNum = (date.getDay() + 6) % 7;
 
-	// Set the target to the nearest Thursday (current date + 4 - the current day number)
+	// Set the target to the nearest Thursday (current date + 4 - the current-day number)
 	tempDate.setDate(tempDate.getDate() - dayNum + 3);
 
 	// ISO 8601 week number of the year for this date

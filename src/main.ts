@@ -1,8 +1,10 @@
 import { Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian';
-import { createCompendiumNote } from '@/create-note';
-import { NoteTypeSelectModal, TextPromptModal } from '@/prompts';
-import { DEFAULT_SETTINGS, RpgPlayerNotesSettings, RpgPlayerNotesSettingsTab } from '@/settings';
-import { registerDevTools } from './devtools';
+import { DEFAULT_SETTINGS, RpgPlayerNotesSettings } from './constants/rpg-player-notes-settings';
+import { createCompendiumNote } from './create-note';
+import { registerDevTools } from './devel/devtools';
+import { NoteTypeSelectModal } from './ui/note-type-select.modal';
+import { RpgPlayerNotesSettingsTab } from './ui/settings';
+import { TextPromptModal } from './ui/text-prompt.modal';
 
 export default class RpgPlayerNotesPlugin extends Plugin {
 	settings!: RpgPlayerNotesSettings;
@@ -17,7 +19,7 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'rpgplayernotes-create-new-note',
-			name: 'Create New RPG Player Note',
+			name: 'Create New Note',
 			editorCallback: async (editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
 				let title: string | null = editor.getSelection().trim();
 				let replaceSelection = true;
