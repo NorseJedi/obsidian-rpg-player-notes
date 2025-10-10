@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-rpg-player-notes",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "Obsidian.md plugin for RPG players who like to take notes during sessions. Currently it adds a command to create new notes of various types, using the selected text as a title (or specifying a title if no text is selected) and put them into predefined folders, all configurable in the plugin settings.",
 	"main": "dist/main.js",
 	"type": "module",
