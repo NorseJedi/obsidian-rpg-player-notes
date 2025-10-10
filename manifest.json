@@ -1,9 +1,9 @@
 {
-	"id": "rpg-player-notes-utils",
-	"name": "RPG Player Notes Utilities",
+	"id": "rpg-player-notes",
+	"name": "RPG Player Notes",
 	"version": "0.2.2",
 	"minAppVersion": "1.9.14",
-	"description": "Adds a command to create new notes of various predefined types, using the selected text as a title and putting them into predefined folders based on the type. Types and folders can be customized by the user.",
+	"description": "Create new notes of predefined types with the selected text as the title, and save the note to a predefined folder based on the type, optionally with replacement tokens. Types, folders and tokens are user configurable.",
 	"author": "Roy W. Andersen",
 	"authorUrl": "https://github.com/NorseJedi",
 	"license": "MIT",

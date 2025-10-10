@@ -1,7 +1,7 @@
 {
-	"name": "rpg-player-notes-plugin",
+	"name": "obsidian-rpg-player-notes",
 	"version": "0.2.2",
-	"description": "This is a simple Obsidian.md plugin for RPG players who like to take notes during sessions. Currently it adds a command to create new notes of various types, using the selected text as a title (or specifying a title if no text is selected) and put them into predefined folders, all configurable in the plugin settings.",
+	"description": "Obsidian.md plugin for RPG players who like to take notes during sessions. Currently it adds a command to create new notes of various types, using the selected text as a title (or specifying a title if no text is selected) and put them into predefined folders, all configurable in the plugin settings.",
 	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
@@ -18,9 +18,9 @@
 		"url": "https://github.com/NorseJedi"
 	},
 	"bugs": {
-		"url": "https://github.com/NorseJedi/rpg-player-notes-plugin/issues"
+		"url": "https://github.com/NorseJedi/obsidian-rpg-player-notes/issues"
 	},
-	"homepage": "https://github.com/NorseJedi/rpg-player-notes-plugin",
+	"homepage": "https://github.com/NorseJedi/obsidian-rpg-player-notes",
 	"license": "MIT",
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.5",
