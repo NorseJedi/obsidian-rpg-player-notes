@@ -1,7 +1,7 @@
 {
 	"id": "rpg-player-notes-utils",
 	"name": "RPG Player Notes Utilities",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"minAppVersion": "1.9.14",
 	"description": "Adds a command to create new notes of various predefined types, using the selected text as a title and putting them into predefined folders based on the type. Types and folders can be customized by the user.",
 	"author": "Roy W. Andersen",
