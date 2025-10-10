@@ -57,20 +57,20 @@ With this plugin, I've set all new notes of type "Person" to be created in `Comp
 
 ### Tokens
 There are some tokens defined by default, which are replaced with various date information.
-| Token | Replacement |
-| ----- | ----------- |
+
+| Token | Replacement                                      |
+| :-----: |:-------------------------------------------------|
 | `{DATE}` | The current date in ISO-8601 format (YYYY-MM-DD) |
-| `{YEAR}`: | The current year (YYYY) |
-| `{MONTH}`: | The current numeric month (no leading zero) |
-| `{DAY}`: | The current day of the month (no leading zero) |
-| `{DAYFULL}`: | Name of the current day, in english |
-| `{DAYSHORT}`: | Short name of the current day, in english |
-| `{MONTHFULL}`: | Name of the current month, in english |
-| `{MONTHSHORT}`: | Short name of the current month, in english |
-| `{WEEK}`: | The current week number according to ISO-8601 |
+| `{YEAR}` | The current year (YYYY)                          |
+| `{MONTH}` | The current numeric month (no leading zero)      |
+| `{DAY}` | The current day of the month (no leading zero)   |
+| `{DAYFULL}` | Name of the current day, in english              |
+| `{DAYSHORT}` | Short name of the current day, in english        |
+| `{MONTHFULL}` | Name of the current month, in english            |
+| `{MONTHSHORT}` | Short name of the current month, in english      |
+| `{WEEK}` | The current week number according to ISO-8601    |
 
-In addition, you can define your own tokens in the plugin settings. You set the token word (without the `{` and `}`) and a JavaScript expression that will be evaluated to get the replacement. This expression must return a string.
-
+In addition, you can define your own tokens in the plugin settings. You set the token word (without the `{` and `}`) and a JavaScript expression that returns a string, that will be evaluated to get the replacement.
 
 In time, I'll probably add more features and options as I find the need, but for now this is all I need to get started. Feel free to suggest features or contribute code, and of course, report bugs.
 
