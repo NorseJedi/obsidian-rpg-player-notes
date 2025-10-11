@@ -9,6 +9,7 @@ node_modules
 
 # Don't include the dist folder
 dist
+devbuild
 
 # Exclude sourcemaps
 *.map

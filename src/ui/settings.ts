@@ -1,6 +1,6 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
+import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 import { SplitDirection } from '../constants/split-direction';
-import { addToggleAndReturn, bindVisibilityToToggle } from '../helpers';
+import { addToggleAndReturn, bindVisibilityToToggle, nanoid } from '../helpers';
 import RpgPlayerNotesPlugin from '../main';
 import { NoteTypeEditModal } from './edit-note-type.modal';
 import { UserTokenModal } from './edit-user-token.modal';
@@ -115,13 +115,18 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 
 	private editNoteTypeModal(index?: number) {
 		const { noteTypes } = this.plugin.settings;
-		const existing = index != null ? noteTypes[index] : { id: '', label: '', path: '' };
+		const existing = index != null ? noteTypes[index] : { id: nanoid(), label: '', path: '' };
 
 		const modal = new NoteTypeEditModal(this.plugin, existing, async (updated) => {
 			if (index != null) {
 				noteTypes[index] = updated;
 			} else {
-				noteTypes.push(updated);
+				const noteTypeExists = this.plugin.settings.noteTypes.find((t) => t.label === updated.label);
+				if (noteTypeExists) {
+					new Notice(`A note type named "${updated.label}" already exists.`);
+					return;
+				}
+				this.plugin.settings.noteTypes.push(updated);
 			}
 			await this.plugin.saveSettings();
 			this.display();

@@ -51,24 +51,6 @@ export const replaceTokens = (path: string, settings: RpgPlayerNotesSettings): s
 	return result;
 };
 
-export function runUserTokenJS(js: string, context: Record<string, any> = {}): string {
-	try {
-		// Create a new function with only the context keys as arguments
-		const keys = Object.keys(context);
-		const values = Object.values(context);
-
-		// Wrap user code to always return a string
-		const fn = new Function(...keys, `"use strict"; ${js}`);
-
-		const result = fn(...values);
-
-		return String(result ?? '');
-	} catch (e) {
-		console.error('Error running user token JS:', e);
-		return '';
-	}
-}
-
 export const openFileAccordingToSettings = async (plugin: RpgPlayerNotesPlugin, filePath: string) => {
 	const noteFile = plugin.app.vault.getAbstractFileByPath(filePath);
 	if (noteFile instanceof TFile) {
@@ -110,6 +92,16 @@ export const bindVisibilityToToggle = (toggle: ToggleComponent, targetSetting: S
 	toggle.onChange(updateVisibility);
 };
 
+export const nanoid = (size = 21) => {
+	const urlAlphabet = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict';
+	let id = '';
+	let bytes = crypto.getRandomValues(new Uint8Array((size |= 0)));
+	while (size--) {
+		id += urlAlphabet[bytes[size] & 63];
+	}
+	return id;
+};
+
 /**
  * Adds a toggle to a Setting and returns the ToggleComponent.
  * Simplifies capturing the instance for later use.
@@ -127,10 +119,3 @@ export const addToggleAndReturn = (setting: Setting, initialValue: boolean, onCh
 	}
 	return toggleRef;
 };
-//
-//export const replaceTokens = (str: string): string => {
-//	for (const t of BUILTIN_TOKENS) {
-//		str = str.replaceAll(t.token, t.replace());
-//	}
-//	return str;
-//};

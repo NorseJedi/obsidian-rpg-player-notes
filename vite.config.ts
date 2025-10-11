@@ -6,7 +6,9 @@ import { defineConfig, UserConfig } from 'vite';
 export default defineConfig(async ({ mode }) => {
 	const { resolve } = path;
 	const prod = mode === 'production';
+	const outDir = mode === 'production' ? 'dist' : 'devbuild';
 
+	//noinspection JSUnusedGlobalSymbols
 	return {
 		css: {
 			preprocessorOptions: {
@@ -23,13 +25,13 @@ export default defineConfig(async ({ mode }) => {
 				name: 'copy-manifest',
 				writeBundle() {
 					const src = resolve(__dirname, './manifest.json');
-					const dest = resolve(__dirname, 'dist/manifest.json');
+					const dest = resolve(__dirname, outDir, 'manifest.json');
 					if (mode === 'development') {
-						copyFileSync(resolve(__dirname, 'src/devel/.hotreload'), resolve(__dirname, 'dist/.hotreload'));
-						console.log('✅ [DEVMODE] Copied .hotreload to dist/');
+						copyFileSync(resolve(__dirname, 'src/devel/.hotreload'), resolve(__dirname, outDir, '.hotreload'));
+						console.log(`✅ [DEVMODE] Copied .hotreload to ${outDir}/`);
 					}
 					copyFileSync(src, dest);
-					console.log('✅ Copied manifest.json to dist/');
+					console.log(`✅ Copied manifest.json to ${outDir}/`);
 				}
 			}
 		],
@@ -49,7 +51,7 @@ export default defineConfig(async ({ mode }) => {
 			sourcemap: prod ? false : 'inline',
 			cssCodeSplit: false,
 			emptyOutDir: mode !== 'development',
-			outDir: 'dist',
+			outDir: outDir,
 			rollupOptions: {
 				input: {
 					main: resolve(__dirname, 'src/main.ts'),

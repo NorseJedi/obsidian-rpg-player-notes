@@ -1,3 +1,4 @@
+import { nanoid } from '../helpers';
 import { NoteType } from './note-type';
 import { SplitDirection } from './split-direction';
 import { UserDefinedToken } from './tokens';
@@ -14,11 +15,11 @@ export const DEFAULT_SETTINGS: RpgPlayerNotesSettings = {
 	splitDirection: 'same',
 	userTokens: [],
 	noteTypes: [
-		{ id: 'person', label: 'Person', path: 'Compendium/People' },
-		{ id: 'location', label: 'Location', path: 'Compendium/Locations' },
-		{ id: 'item', label: 'Item', path: 'Compendium/Items' },
-		{ id: 'creature', label: 'Creature', path: 'Compendium/Creatures' },
-		{ id: 'event', label: 'Event', path: 'Compendium/Events' },
-		{ id: 'group', label: 'Group', path: 'Compendium/Groups' }
+		{ id: nanoid(), label: 'Person', path: 'Compendium/People' },
+		{ id: nanoid(), label: 'Location', path: 'Compendium/Locations' },
+		{ id: nanoid(), label: 'Item', path: 'Compendium/Items' },
+		{ id: nanoid(), label: 'Creature', path: 'Compendium/Creatures' },
+		{ id: nanoid(), label: 'Event', path: 'Compendium/Events' },
+		{ id: nanoid(), label: 'Group', path: 'Compendium/Groups' }
 	]
 };

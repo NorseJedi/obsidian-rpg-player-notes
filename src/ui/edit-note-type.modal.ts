@@ -22,23 +22,18 @@ export class NoteTypeEditModal extends Modal {
 
 		contentEl.empty();
 
-		const pathDescr = buildPathDescriptionFragment(this.plugin);
+		const pathDescription = buildPathDescriptionFragment(this.plugin);
 
-		new Setting(contentEl).setName(this.temp.id ? 'Edit note type' : 'New note type').setHeading();
-
-		new Setting(contentEl)
-			.setName('ID')
-			.setDesc('Used internally - must be unique.')
-			.addText((text) => text.setValue(this.temp.id).onChange((value) => (this.temp.id = value.trim())));
+		new Setting(contentEl).setName(this.temp.label ? 'Edit note type' : 'New note type').setHeading();
 
 		new Setting(contentEl)
 			.setName('Label')
-			.setDesc('Name shown in the note type selector.')
+			.setDesc('Name of the type. Must be unique.')
 			.addText((text) => text.setValue(this.temp.label).onChange((value) => (this.temp.label = value.trim())));
 
 		new Setting(contentEl)
 			.setName('Path')
-			.setDesc(pathDescr)
+			.setDesc(pathDescription)
 			.addText((text) => text.setValue(this.temp.path).onChange((value) => (this.temp.path = value.trim())));
 
 		new Setting(contentEl)
@@ -49,7 +44,7 @@ export class NoteTypeEditModal extends Modal {
 					//					.setButtonText('Save')
 					.setCta()
 					.onClick(() => {
-						if (!this.temp.id || !this.temp.label || !this.temp.path) {
+						if (!this.temp.label || !this.temp.path) {
 							new Notice('All fields are required');
 							return;
 						}
