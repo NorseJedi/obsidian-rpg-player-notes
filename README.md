@@ -9,8 +9,13 @@ What this plugin does, is add a single command – `RPG Player Notes: Create New
 * You will be able to select the type of note from a list, and this type determines which folder the new note is saved in.
   * Both the note types and their associated folders are configurable in the plugin settings.
   * Paths can be either relative to the top-level folder of the active note or absolute.
+    * Any missing paths will be created.
     * To specify an absolute folder, make sure it begins with a forward slash (`/`)
     * All other paths are relative to the top-level folder of the active note.
+  * Instead of a new note, you can specify that you want the note type added as a section in an existing note.
+    * Say you have a note in `Creatures/Dragons` where you want all dragons to go. You can then define a note type `Chromatic Dragon` with the path `Creatures/Dragons#Chromatic Dragons`. Now if you select the text "Red Dragon" and select your "Chromatic Dragon" note type, "Red Dragon" will be added as a second level header (`## Red Dragon`) under the first level Chromatic Dragons header (`# Chromatic Dragons`).
+    * Any note and header level (as well as folder) in the configured path that doesn't exist will be created.
+    * There is also an option to automatically sort the sections under the header where the new "note" is added. If enabled, this sorting will happen immediately after the new header is added.
   * You can use tokens in the path to have it dynamically replaced when the new note is created.
     * Some tokens are defined by default, see below.
     * Additional tokens can be defined in the plugin settings.
