@@ -1,7 +1,7 @@
-import { Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath, TFile, Vault, App } from 'obsidian';
+import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath, TFile, Vault } from 'obsidian';
+import { sectionSortComparators } from './constants/section-sort-comparators';
 import { ensureFolderExists, ensureNoteExists, escapeRegExp, openFileAccordingToSettings, parseNoteTarget } from './helpers';
 import RpgPlayerNotesPlugin from './main';
-import { sectionSortComparators } from './constants/section-sort-comparators';
 import { ComparatorFn, NoteSection, NoteType } from './types/rpg-player-notes';
 
 export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor: Editor, ctx: MarkdownView | MarkdownFileInfo, title: string, type: NoteType, replaceSelection: boolean) => {
@@ -12,7 +12,6 @@ export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor:
 		return;
 	}
 
-	console.log(type);
 	const parsedTarget = parseNoteTarget(plugin, type, title, currentFile);
 	const targetNotePath = parsedTarget.notePath;
 
@@ -34,9 +33,9 @@ export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor:
 		const targetNoteFolder = targetNotePath.substring(0, targetNotePath.lastIndexOf('/'));
 		await ensureFolderExists(plugin.app.vault, targetNoteFolder);
 
-		targetFile = vault.getFileByPath(targetNotePath) ?? await vault.create(targetNotePath, '');
+		targetFile = vault.getFileByPath(targetNotePath) ?? (await vault.create(targetNotePath, ''));
 		linkTarget = plugin.app.metadataCache.fileToLinktext(targetFile, '', true);
-		editor.replaceSelection(`[[${linkTarget}|${title}]]`);
+		linkTarget = `${linkTarget}|${title}`;
 		new Notice(`Created ${type.name} note "${title}" in ${targetNoteFolder}`);
 	}
 
@@ -50,7 +49,6 @@ export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor:
 
 	if (plugin.settings.openNoteAfterCreation) {
 		await openFileAccordingToSettings(plugin, targetNotePath);
-		console.log(parsedTarget);
 		await focusBelowInsertedHeading(plugin.app, targetFile, insertedHeadings.last() ?? '');
 	}
 };
@@ -65,7 +63,6 @@ const appendUnderHeadings = async (vault: Vault, file: TFile, headings: string[]
 	for (const heading of headings) {
 		const headingRegex = new RegExp(`^#{${currentLevel}} ${escapeRegExp(heading)}$`, 'm');
 		const match = data.match(headingRegex);
-		console.log(match);
 
 		if (match) {
 			// Heading exists, set the insert position right after it
@@ -88,11 +85,7 @@ const appendUnderHeadings = async (vault: Vault, file: TFile, headings: string[]
 	return insertedHeadings;
 };
 
-const focusBelowInsertedHeading = async (
-	app: App,
-	file: TFile,
-	insertedHeading: string
-): Promise<void> => {
+const focusBelowInsertedHeading = async (app: App, file: TFile, insertedHeading: string): Promise<void> => {
 	const leaf = app.workspace.getLeaf(true);
 	await leaf.openFile(file);
 
@@ -105,9 +98,8 @@ const focusBelowInsertedHeading = async (
 
 	// Find the inserted heading line
 	const lines = editor.getValue().split('\n');
-	const lineIndex = lines.findIndex(line => line.trim() === insertedHeading.trim());
+	const lineIndex = lines.findIndex((line) => line.trim() === insertedHeading.trim());
 
-	console.log(lineIndex);
 	if (lineIndex !== -1) {
 		// Place the cursor *below* the inserted heading
 		editor.setCursor({ line: lineIndex + 1, ch: 0 });
@@ -162,7 +154,7 @@ const sortSections = async (plugin: RpgPlayerNotesPlugin, file: TFile, parentHea
 		}
 
 		// Sort sections alphabetically by title
-//		sections.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: false, sensitivity: 'base' }));
+		//		sections.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: false, sensitivity: 'base' }));
 		if (plugin.settings.keepNoteSectionsSorted) {
 			if (plugin.settings.sortingMode === 'custom' && plugin.settings.customSortingRegex) {
 				const regex = new RegExp(plugin.settings.customSortingRegex, 'gi');
@@ -174,7 +166,7 @@ const sortSections = async (plugin: RpgPlayerNotesPlugin, file: TFile, parentHea
 		}
 
 		// Rebuild parent with sorted sections
-		const sortedSection = section.slice(0, matches[0].index) + sections.map(s => s.text).join('\n\n') + '\n';
+		const sortedSection = section.slice(0, matches[0].index) + sections.map((s) => s.text).join('\n\n') + '\n';
 
 		// Replace the unsorted section in the file with the new sorted section
 		const newData = data.slice(0, parentStart) + sortedSection + data.slice(parentEnd >= 0 ? parentEnd : data.length);

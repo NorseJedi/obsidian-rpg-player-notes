@@ -5,6 +5,7 @@ import RpgPlayerNotesPlugin from '../main';
 import { NoteType, RpnSectionSortComparer, RpnSplitDirection, UserDefinedToken } from '../types/rpg-player-notes';
 import { NoteTypeEditModal } from './edit-note-type.modal';
 import { UserTokenModal } from './edit-user-token.modal';
+import { NoteTypeUsageStatsModal } from './note-type-usage-stats.modal';
 
 export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 	plugin: RpgPlayerNotesPlugin;
@@ -22,26 +23,24 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName('Open new note after creation')
 			.setDesc('Automatically open the new note once it’s created.')
-			.addToggle(toggle =>
-				toggle
-					.setValue(this.plugin.settings.openNoteAfterCreation)
-					.onChange(async (value) => {
-						console.log('toggle changed', value);
-						this.plugin.settings.openNoteAfterCreation = value;
-						await this.plugin.saveSettings();
-						showHideSplitSetting(value);
-					})
+			.addToggle((toggle) =>
+				toggle.setValue(this.plugin.settings.openNoteAfterCreation).onChange(async (value) => {
+					this.plugin.settings.openNoteAfterCreation = value;
+					await this.plugin.saveSettings();
+					showHideSplitSetting(value);
+				})
 			);
 
 		const splitSetting = new Setting(containerEl)
 			.setName('Split direction')
 			.setDesc('Choose where the note opens: same tab, vertical split, or horizontal split.')
-			.addDropdown(dropdown => {
-				dropdown.addOption('same', 'Same tab group')
+			.addDropdown((dropdown) => {
+				dropdown
+					.addOption('same', 'Same tab group')
 					.addOption('vertical', 'Vertical split')
 					.addOption('horizontal', 'Horizontal split')
 					.setValue(this.plugin.settings.splitDirection)
-					.onChange(async value => {
+					.onChange(async (value) => {
 						this.plugin.settings.splitDirection = value as RpnSplitDirection;
 						await this.plugin.saveSettings();
 					});
@@ -53,14 +52,15 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Keep sections sorted')
-			.setDesc('Automatically keep sections sorted when adding notes as sections instead of new files. This will automatically sort the sections using the selected compare method, but only at the level where the new section is inserted.')
-			.addToggle(toggle => {
-				toggle.setValue(this.plugin.settings.keepNoteSectionsSorted)
-					.onChange(async value => {
-						this.plugin.settings.keepNoteSectionsSorted = value;
-						await this.plugin.saveSettings();
-						showHideSortingMode(value);
-					});
+			.setDesc(
+				'Automatically keep sections sorted when adding notes as sections instead of new files. This will automatically sort the sections using the selected compare method, but only at the level where the new section is inserted.'
+			)
+			.addToggle((toggle) => {
+				toggle.setValue(this.plugin.settings.keepNoteSectionsSorted).onChange(async (value) => {
+					this.plugin.settings.keepNoteSectionsSorted = value;
+					await this.plugin.saveSettings();
+					showHideSortingMode(value);
+				});
 			});
 
 		const sortingModeSetting = new Setting(containerEl)
@@ -70,31 +70,31 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 				for (const option of SORTING_MODES) {
 					dropdown.addOption(option.value, option.display);
 				}
-				dropdown
-					.setValue(this.plugin.settings.sortingMode)
-					.onChange(async value => {
-						this.plugin.settings.sortingMode = value as RpnSectionSortComparer;
-						await this.plugin.saveSettings();
-						showHideSortRegexpSetting(value as RpnSectionSortComparer);
-					});
+				dropdown.setValue(this.plugin.settings.sortingMode).onChange(async (value) => {
+					this.plugin.settings.sortingMode = value as RpnSectionSortComparer;
+					await this.plugin.saveSettings();
+					showHideSortRegexpSetting(value as RpnSectionSortComparer);
+				});
 				return dropdown;
 			});
 
 		const sortingRegexSetting = new Setting(containerEl)
 			.setName('Custom sorting regex')
-			.setDesc(createFragment(frag => {
-				frag.createEl('p', { text: 'Provide a JavaScript regular expression used to determine sort order.' });
-				frag.createEl('p', { text: 'Use capturing groups to extract parts of the header for comparison.' });
-				const list = frag.createEl('ul');
-				list.createEl('li', { text: 'Example: ^## (.*)$ — captures level 2 headers' });
-				list.createEl('li', { text: 'Example: ^### (\\w+) — captures only word characters in level 3 headers' });
-				frag.createEl('p', { text: 'If this is left empty, the default sorting mode will be used.' });
-			}))
+			.setDesc(
+				// biome-ignore lint/correctness/noUndeclaredVariables: Just biome being difficult...
+				createFragment((frag) => {
+					frag.createEl('p', { text: 'Provide a JavaScript regular expression used to determine sort order.' });
+					frag.createEl('p', { text: 'Use capturing groups to extract parts of the header for comparison.' });
+					const list = frag.createEl('ul');
+					list.createEl('li', { text: 'Example: ^## (.*)$ — captures level 2 headers' });
+					list.createEl('li', { text: 'Example: ^### (\\w+) — captures only word characters in level 3 headers' });
+					frag.createEl('p', { text: 'If this is left empty, the default sorting mode will be used.' });
+				})
+			)
 			.addText((text) =>
-				text.setValue(this.plugin.settings.customSortingRegex)
-					.onChange((value) => {
-						this.plugin.settings.customSortingRegex = value.trim();
-					})
+				text.setValue(this.plugin.settings.customSortingRegex).onChange((value) => {
+					this.plugin.settings.customSortingRegex = value.trim();
+				})
 			);
 
 		const showHideSortingMode = (show: boolean) => {
@@ -106,9 +106,33 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 			sortingRegexSetting.settingEl.style.display = mode === 'custom' ? '' : 'none';
 		};
 
+		showHideSortingMode(this.plugin.settings.keepNoteSectionsSorted);
+		showHideSortRegexpSetting(this.plugin.settings.sortingMode);
+
+		new Setting(containerEl)
+			.setName('Sort note types by usage')
+			.setDesc(
+				'When selecting the type of note to create, this will sort them so that the most frequently used are higher on the list. Otherwise they are sorted alphabetically. Note that disabling this feature will also disable the tracking.'
+			)
+			.addButton((btn) =>
+				btn
+					.setIcon('info')
+					.setTooltip('Open usage statistics')
+					.onClick(() => this.openUsageStatisticsModal())
+			)
+			.addToggle((toggle) =>
+				toggle.setValue(this.plugin.settings.sortNoteTypeListByUsage).onChange(async (value) => {
+					this.plugin.settings.sortNoteTypeListByUsage = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
 		new Setting(containerEl).setName('Note types').setHeading();
 
-		this.plugin.settings.noteTypes.forEach((type: NoteType, index: number) => {
+		const noteTypesList = Object.values(this.plugin.settings.noteTypes);
+		noteTypesList.sort((a, b) => a.name.localeCompare(b.name));
+
+		noteTypesList.forEach((type: NoteType, index: number) => {
 			const typeSetting = new Setting(containerEl).setName(`${type.name}`).setDesc(`Path: ${type.path}`);
 
 			typeSetting.addButton((btn) =>
@@ -171,8 +195,10 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 				.setCta()
 				.onClick(() => this.editTokenModal())
 		);
+	}
 
-		//			.addButton((btn) => btn.setButtonText('Manage').onClick(() => new UserTokenModal(this.plugin).open()));
+	private openUsageStatisticsModal() {
+		new NoteTypeUsageStatsModal(this.plugin).open();
 	}
 
 	private editNoteTypeModal(index?: number) {

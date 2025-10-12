@@ -56,7 +56,7 @@
 			"style": {
 				"noInferrableTypes": "error",
 				"noNamespace": "error",
-				"noNonNullAssertion": "warn",
+				"noNonNullAssertion": "off",
 				"useArrayLiterals": "error",
 				"useAsConstAssertion": "error"
 			},

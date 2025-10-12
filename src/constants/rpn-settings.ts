@@ -8,6 +8,8 @@ export const DEFAULT_SETTINGS: RpnSettings = {
 	customSortingRegex: '',
 	splitDirection: 'none',
 	userTokens: [],
+	sortNoteTypeListByUsage: true,
+	noteTypeUsage: {},
 	noteTypes: [
 		{ id: nanoid(), name: 'Person', path: 'Compendium/People' },
 		{ id: nanoid(), name: 'Location', path: 'Compendium/Locations' },

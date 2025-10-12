@@ -1,4 +1,4 @@
-import { normalizePath, Notice, TFile, Vault, WorkspaceLeaf } from 'obsidian';
+import { Notice, normalizePath, TFile, Vault, WorkspaceLeaf } from 'obsidian';
 import { BUILTIN_TOKENS } from './constants/tokens';
 import RpgPlayerNotesPlugin from './main';
 import { NoteType, ParsedNoteTarget, RpnSettings } from './types/rpg-player-notes';
@@ -109,9 +109,7 @@ export const parseNoteTarget = (plugin: RpgPlayerNotesPlugin, type: NoteType, ti
 		};
 	}
 	// Any number of #'s in the path denotes that the last directory before the first # is actually a note
-	const dirs = path
-		.substring(0, path.lastIndexOf('/'))
-		.split('/');
+	const dirs = path.substring(0, path.lastIndexOf('/')).split('/');
 
 	const noteParts = path
 		.substring(path.lastIndexOf('/') + 1)
@@ -134,4 +132,3 @@ export const parseNoteTarget = (plugin: RpgPlayerNotesPlugin, type: NoteType, ti
 export const escapeRegExp = (str: string): string => {
 	return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
-

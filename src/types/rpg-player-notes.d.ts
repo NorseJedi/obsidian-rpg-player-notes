@@ -24,10 +24,12 @@ export type UserDefinedToken = Omit<ReplacementToken, 'replace'> & {
 export type RpnSettings = {
 	openNoteAfterCreation: boolean;
 	keepNoteSectionsSorted: boolean;
-	sortingMode: RpnSectionSortComparer,
-	customSortingRegex: string,
+	sortingMode: RpnSectionSortComparer;
+	customSortingRegex: string;
 	splitDirection: RpnSplitDirection;
 	noteTypes: NoteType[];
+	sortNoteTypeListByUsage: boolean;
+	noteTypeUsage: Record<string, number>;
 	userTokens: UserDefinedToken[];
 };
 
@@ -52,4 +54,4 @@ export type NoteSection = {
 export type SortingMode = {
 	value: string;
 	display: string;
-}
+};

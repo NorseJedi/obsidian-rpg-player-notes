@@ -30,6 +30,7 @@ table.rpg-note-token-table {
 		&:hover {
 			background-color: var(--interactive-accent);
 		}
+
 		transition: background-color 0.1s ease-in-out;
 	}
 
@@ -41,11 +42,84 @@ table.rpg-note-token-table {
 		border-bottom: 2px solid color-mix(in srgb, var(--interactive-accent) 60%, var(--background-primary-alt));
 		background-color: var(--background-primary-alt);
 	}
+
 	td {
 		padding: 4px 6px;
 		vertical-align: top;
+
 		&:first-child {
 			font-weight: 500;
 		}
+	}
+}
+
+.rpg-note-usage-stats {
+	div.rpg-note-usage-table-container {
+		transition: opacity 0.15s ease-in-out;
+
+		&.fade-out {
+			opacity: 0;
+		}
+
+		table.fade-in {
+			opacity: 0;
+			animation: fadeIn 0.15s ease-in forwards;
+		}
+
+		table.rpg-note-usage-table {
+			width: fit-content;
+			margin: 1em auto;
+			border-collapse: collapse;
+			font-size: var(--font-ui-smaller);
+
+			th, td {
+				padding: 4px 8px;
+				border-bottom: 1px solid var(--background-modifier-border);
+			}
+
+			th {
+				text-align: left;
+				background-color: var(--background-primary-alt);
+
+				&.sortable {
+					cursor: var(--cursor-link);
+					user-select: none;
+
+					&.sorted-asc::after {
+						content: " ▲";
+						opacity: 0.6;
+					}
+
+					&.sortable.sorted-desc::after {
+						content: " ▼";
+						opacity: 0.6;
+					}
+				}
+			}
+
+			tr:nth-child(even) {
+				background-color: var(--background-secondary-alt);
+			}
+
+			tr:nth-child(odd) {
+				background-color: var(--background-secondary);
+			}
+
+			tr:hover {
+				background-color: var(--background-modifier-active-hover);
+				transition: background-color 0.1s ease-in-out;
+			}
+		}
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(2px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
 	}
 }
