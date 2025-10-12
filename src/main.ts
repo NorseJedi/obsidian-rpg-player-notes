@@ -1,13 +1,14 @@
 import { Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian';
-import { DEFAULT_SETTINGS, RpgPlayerNotesSettings } from './constants/rpg-player-notes-settings';
+import { DEFAULT_SETTINGS } from './constants/rpn-settings';
 import { createCompendiumNote } from './create-note';
 import { registerDevTools } from './devel/devtools';
+import { RpnSettings } from './types/rpg-player-notes';
 import { NoteTypeSelectModal } from './ui/note-type-select.modal';
 import { RpgPlayerNotesSettingsTab } from './ui/settings';
 import { TextPromptModal } from './ui/text-prompt.modal';
 
 export default class RpgPlayerNotesPlugin extends Plugin {
-	settings!: RpgPlayerNotesSettings;
+	settings!: RpnSettings;
 
 	async onload() {
 		await this.loadSettings();

@@ -1,6 +1,6 @@
 import { Modal, Notice, Setting } from 'obsidian';
-import { NoteType } from '../constants/note-type';
 import RpgPlayerNotesPlugin from '../main';
+import { NoteType } from '../types/rpg-player-notes';
 import { buildPathDescriptionFragment } from './ui-helpers';
 
 export class NoteTypeEditModal extends Modal {
@@ -24,12 +24,12 @@ export class NoteTypeEditModal extends Modal {
 
 		const pathDescription = buildPathDescriptionFragment(this.plugin);
 
-		new Setting(contentEl).setName(this.temp.label ? 'Edit note type' : 'New note type').setHeading();
+		new Setting(contentEl).setName(this.temp.name ? 'Edit note type' : 'New note type').setHeading();
 
 		new Setting(contentEl)
-			.setName('Label')
+			.setName('Name')
 			.setDesc('Name of the type. Must be unique.')
-			.addText((text) => text.setValue(this.temp.label).onChange((value) => (this.temp.label = value.trim())));
+			.addText((text) => text.setValue(this.temp.name).onChange((value) => (this.temp.name = value.trim())));
 
 		new Setting(contentEl)
 			.setName('Path')
@@ -44,7 +44,7 @@ export class NoteTypeEditModal extends Modal {
 					//					.setButtonText('Save')
 					.setCta()
 					.onClick(() => {
-						if (!this.temp.label || !this.temp.path) {
+						if (!this.temp.name || !this.temp.path) {
 							new Notice('All fields are required');
 							return;
 						}

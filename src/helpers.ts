@@ -1,7 +1,7 @@
-import { normalizePath, Setting, TFile, ToggleComponent, Vault, WorkspaceLeaf } from 'obsidian';
-import { RpgPlayerNotesSettings } from './constants/rpg-player-notes-settings';
+import { normalizePath, Notice, TFile, Vault, WorkspaceLeaf } from 'obsidian';
 import { BUILTIN_TOKENS } from './constants/tokens';
 import RpgPlayerNotesPlugin from './main';
+import { NoteType, ParsedNoteTarget, RpnSettings } from './types/rpg-player-notes';
 
 export const ensureFolderExists = async (vault: Vault, folderPath: string): Promise<void> => {
 	const adapter = vault.adapter;
@@ -24,7 +24,18 @@ export const ensureFolderExists = async (vault: Vault, folderPath: string): Prom
 	await vault.createFolder(folderPath);
 };
 
-export const getAllTokens = (settings: RpgPlayerNotesSettings) => {
+export const ensureNoteExists = async (vault: Vault, notePath: string): Promise<TFile> => {
+	const existing = vault.getAbstractFileByPath(notePath);
+	if (existing instanceof TFile) {
+		return existing;
+	}
+
+	await ensureFolderExists(vault, notePath.substring(0, notePath.lastIndexOf('/')));
+
+	return await vault.create(notePath, '');
+};
+
+export const getAllTokens = (settings: RpnSettings) => {
 	return [
 		...BUILTIN_TOKENS,
 		...settings.userTokens.map((t) => ({
@@ -43,7 +54,7 @@ export const getAllTokens = (settings: RpgPlayerNotesSettings) => {
 	];
 };
 
-export const replaceTokens = (path: string, settings: RpgPlayerNotesSettings): string => {
+export const replaceTokens = (path: string, settings: RpnSettings): string => {
 	let result = path;
 	for (const t of getAllTokens(settings)) {
 		result = result.replaceAll(t.token, t.replace());
@@ -60,7 +71,7 @@ export const openFileAccordingToSettings = async (plugin: RpgPlayerNotesPlugin, 
 			case 'vertical':
 				leaf = plugin.app.workspace.getLeaf('split', plugin.settings.splitDirection);
 				break;
-			case 'same':
+			case 'none':
 			default:
 				leaf = plugin.app.workspace.getLeaf(true);
 				break;
@@ -68,28 +79,6 @@ export const openFileAccordingToSettings = async (plugin: RpgPlayerNotesPlugin, 
 		await leaf.openFile(noteFile);
 		plugin.app.workspace.setActiveLeaf(leaf, { focus: true });
 	}
-};
-
-//export const toTitleCase = (str: string): string => {
-//	return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
-//};
-
-/**
- * Binds a toggle control to show/hide another Setting row.
- * @param toggle The toggle element (from addToggle)
- * @param targetSetting The Setting whose visibility should change
- * @param initialValue Optional initial toggle value (used on render)
- */
-export const bindVisibilityToToggle = (toggle: ToggleComponent, targetSetting: Setting, initialValue?: boolean) => {
-	const updateVisibility = (visible: boolean) => {
-		targetSetting.settingEl.style.display = visible ? '' : 'none';
-	};
-
-	// Apply initial visibility
-	updateVisibility(initialValue ?? toggle.getValue());
-
-	// React to toggle changes
-	toggle.onChange(updateVisibility);
 };
 
 export const nanoid = (size = 21) => {
@@ -102,20 +91,47 @@ export const nanoid = (size = 21) => {
 	return id;
 };
 
-/**
- * Adds a toggle to a Setting and returns the ToggleComponent.
- * Simplifies capturing the instance for later use.
- */
-export const addToggleAndReturn = (setting: Setting, initialValue: boolean, onChange: (value: boolean) => void): ToggleComponent => {
-	let toggleRef: ToggleComponent | undefined;
+export const parseNoteTarget = (plugin: RpgPlayerNotesPlugin, type: NoteType, title: string, currentFile: TFile): ParsedNoteTarget => {
+	let path: string = replaceTokens(type.path, plugin.settings);
 
-	setting.addToggle((toggle) => {
-		toggleRef = toggle;
-		toggle.setValue(initialValue).onChange(onChange);
-	});
-
-	if (!toggleRef) {
-		throw new Error('addToggleAndReturn: ToggleComponent was not created!');
+	if (!path.startsWith('/')) {
+		// Path is relative to the top folder of the current note
+		path = `${currentFile.path.split('/')[0]}/${path}`;
 	}
-	return toggleRef;
+
+	path = normalizePath(path);
+
+	if (!path.contains('#')) {
+		// Just a path to create a new note in
+		return {
+			headings: [],
+			notePath: normalizePath(`${path}/${title}.md`)
+		};
+	}
+	// Any number of #'s in the path denotes that the last directory before the first # is actually a note
+	const dirs = path
+		.substring(0, path.lastIndexOf('/'))
+		.split('/');
+
+	const noteParts = path
+		.substring(path.lastIndexOf('/') + 1)
+		.split('#')
+		.filter(Boolean);
+
+	noteParts.push(title);
+
+	const note = noteParts.shift();
+	if (typeof note === 'undefined') {
+		new Notice(`ERROR: The path for note type "${type.name}" is invalid`);
+	}
+
+	return {
+		notePath: normalizePath(`${dirs.join('/')}/${note}.md`),
+		headings: noteParts.map((h) => h.trim())
+	};
 };
+
+export const escapeRegExp = (str: string): string => {
+	return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+

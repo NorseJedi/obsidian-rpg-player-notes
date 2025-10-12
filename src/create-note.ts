@@ -1,7 +1,8 @@
-import { Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath } from 'obsidian';
-import { NoteType } from './constants/note-type';
-import { ensureFolderExists, openFileAccordingToSettings, replaceTokens } from './helpers';
+import { Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath, TFile, Vault, App } from 'obsidian';
+import { ensureFolderExists, ensureNoteExists, escapeRegExp, openFileAccordingToSettings, parseNoteTarget } from './helpers';
 import RpgPlayerNotesPlugin from './main';
+import { sectionSortComparators } from './constants/section-sort-comparators';
+import { ComparatorFn, NoteSection, NoteType } from './types/rpg-player-notes';
 
 export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor: Editor, ctx: MarkdownView | MarkdownFileInfo, title: string, type: NoteType, replaceSelection: boolean) => {
 	const vault = plugin.app.vault;
@@ -11,43 +12,173 @@ export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor:
 		return;
 	}
 
-	let targetFolder: string;
+	console.log(type);
+	const parsedTarget = parseNoteTarget(plugin, type, title, currentFile);
+	const targetNotePath = parsedTarget.notePath;
 
-	if (type.path.startsWith('/')) {
-		// Path is absolute, use it verbatim
-		targetFolder = normalizePath(type.path);
+	let linkTarget: string;
+	let targetFile: TFile;
+	let insertedHeadings: string[] = [];
+
+	if (parsedTarget.headings.length > 0) {
+		// Target is a heading in a note, append under the heading
+		targetFile = await ensureNoteExists(vault, targetNotePath);
+		linkTarget = normalizePath(`${targetNotePath}#${parsedTarget.headings.join('#')}|${title}`);
+		insertedHeadings = await appendUnderHeadings(vault, targetFile, parsedTarget.headings);
+		if (plugin.settings.keepNoteSectionsSorted) {
+			await sortSections(plugin, targetFile, parsedTarget.headings, parsedTarget.headings.length);
+		}
+		new Notice(`Added "${title}" under ${parsedTarget.headings.join(' > ')} in ${targetFile.basename}`);
 	} else {
-		// Path is relative to the top folder of the current note
-		const topFolder = currentFile.path.split('/')[0];
-		targetFolder = normalizePath(`${topFolder}/${type.path}`);
+		// Target is a new note
+		const targetNoteFolder = targetNotePath.substring(0, targetNotePath.lastIndexOf('/'));
+		await ensureFolderExists(plugin.app.vault, targetNoteFolder);
+
+		targetFile = vault.getFileByPath(targetNotePath) ?? await vault.create(targetNotePath, '');
+		linkTarget = plugin.app.metadataCache.fileToLinktext(targetFile, '', true);
+		editor.replaceSelection(`[[${linkTarget}|${title}]]`);
+		new Notice(`Created ${type.name} note "${title}" in ${targetNoteFolder}`);
 	}
-
-	// Replace predefined tokens in the folder name
-	targetFolder = replaceTokens(targetFolder, plugin.settings);
-
-	const newNotePath = normalizePath(`${targetFolder}/${title}.md`);
-
-	// Ensure the folder exists
-	await ensureFolderExists(plugin.app.vault, targetFolder);
-
-	// Create the new note
-	if (!vault.getFileByPath(newNotePath)) {
-		await vault.create(newNotePath, '');
-	}
-
-	const link = normalizePath(`${targetFolder}/${title}|${title}`);
 
 	if (replaceSelection) {
 		// Replace selection with a link
-		editor.replaceSelection(`[[${link}]]`);
+		editor.replaceSelection(`[[${linkTarget}]]`);
 	} else {
 		const cursor = editor.getCursor();
-		editor.replaceRange(`[[${link}]]`, cursor);
+		editor.replaceRange(`[[${linkTarget}]]`, cursor);
 	}
 
-	new Notice(`Created ${type.label} note "${title}" in ${targetFolder}`);
-
 	if (plugin.settings.openNoteAfterCreation) {
-		await openFileAccordingToSettings(plugin, newNotePath);
+		await openFileAccordingToSettings(plugin, targetNotePath);
+		console.log(parsedTarget);
+		await focusBelowInsertedHeading(plugin.app, targetFile, insertedHeadings.last() ?? '');
+	}
+};
+
+const appendUnderHeadings = async (vault: Vault, file: TFile, headings: string[]): Promise<string[]> => {
+	let data = await vault.read(file);
+
+	let currentLevel = 1;
+	let insertPos = data.length;
+	const insertedHeadings: string[] = [];
+
+	for (const heading of headings) {
+		const headingRegex = new RegExp(`^#{${currentLevel}} ${escapeRegExp(heading)}$`, 'm');
+		const match = data.match(headingRegex);
+		console.log(match);
+
+		if (match) {
+			// Heading exists, set the insert position right after it
+			const headingIndex = match.index!;
+			const sectionEnd = findSectionEnd(data, headingIndex, currentLevel);
+			insertPos = sectionEnd >= 0 ? sectionEnd : data.length;
+			insertedHeadings.push(match[0]);
+		} else {
+			// Heading not found, insert it at the current position
+			const newHeading = `\n\n${'#'.repeat(currentLevel)} ${heading}\n`;
+			insertedHeadings.push(newHeading);
+			data = data.slice(0, insertPos) + newHeading + data.slice(insertPos);
+			insertPos += newHeading.length;
+		}
+
+		currentLevel++;
+	}
+
+	await vault.modify(file, data.trim() + '\n');
+	return insertedHeadings;
+};
+
+const focusBelowInsertedHeading = async (
+	app: App,
+	file: TFile,
+	insertedHeading: string
+): Promise<void> => {
+	const leaf = app.workspace.getLeaf(true);
+	await leaf.openFile(file);
+
+	// Get the editor instance for the opened file
+	const view = app.workspace.getActiveViewOfType(MarkdownView);
+	if (!view) {
+		return;
+	}
+	const editor = view.editor;
+
+	// Find the inserted heading line
+	const lines = editor.getValue().split('\n');
+	const lineIndex = lines.findIndex(line => line.trim() === insertedHeading.trim());
+
+	console.log(lineIndex);
+	if (lineIndex !== -1) {
+		// Place the cursor *below* the inserted heading
+		editor.setCursor({ line: lineIndex + 1, ch: 0 });
+		editor.scrollIntoView({ from: { line: lineIndex + 1, ch: 0 }, to: { line: lineIndex + 1, ch: 0 } }, true);
+	}
+};
+
+const findSectionStart = (data: string, headings: string[], level: number): number => {
+	const heading = headings[headings.length - 1];
+	const headingRegex = new RegExp(`^#{${level}} ${escapeRegExp(heading)}$`, 'm');
+	const match = data.match(headingRegex);
+	if (match) {
+		return match.index!;
+	}
+	return 0;
+};
+
+const findSectionEnd = (data: string, startIndex: number, currentLevel: number): number => {
+	// Look for next heading of same or higher level
+	const nextHeadingRegex = new RegExp(`^#{1,${currentLevel}}\\s+.+$`, 'm');
+	const substring = data.slice(startIndex + 1);
+	const match = substring.match(nextHeadingRegex);
+	return match ? startIndex + 1 + match.index! : -1;
+};
+
+const sortSections = async (plugin: RpgPlayerNotesPlugin, file: TFile, parentHeadings: string[], level: number): Promise<void> => {
+	let data = await plugin.app.vault.read(file);
+	const parentLevel = level - 1;
+
+	// Identify parent section boundaries
+
+	if (parentHeadings.length > 0) {
+		const parentStart = findSectionStart(data, parentHeadings, parentLevel);
+		const parentEnd = findSectionEnd(data, parentStart, parentLevel);
+		const section = data.slice(parentStart, parentEnd >= 0 ? parentEnd : data.length);
+
+		// Find the headings at the current level
+		const headingRegex = new RegExp(`^#{${level}} (.+)$`, 'gm');
+		const matches = [...section.matchAll(headingRegex)];
+		if (matches.length < 2) {
+			// Just one section, nothing to sort
+			return;
+		}
+
+		const sections: NoteSection[] = [];
+		for (let i = 0; i < matches.length; i++) {
+			const start = matches[i].index;
+			const end = i < matches.length - 1 ? matches[i + 1].index : section.length;
+			const title = matches[i][1].trim();
+			const text = section.slice(start, end).trimEnd();
+			sections.push({ title, start, end, text });
+		}
+
+		// Sort sections alphabetically by title
+//		sections.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: false, sensitivity: 'base' }));
+		if (plugin.settings.keepNoteSectionsSorted) {
+			if (plugin.settings.sortingMode === 'custom' && plugin.settings.customSortingRegex) {
+				const regex = new RegExp(plugin.settings.customSortingRegex, 'gi');
+				const customComparator: ComparatorFn = (a, b) => a.title.replace(regex, '').localeCompare(b.title.replace(regex, ''), undefined, { sensitivity: 'base' });
+				sections.sort(customComparator);
+			} else {
+				sections.sort(sectionSortComparators[plugin.settings.sortingMode] ?? sectionSortComparators.default);
+			}
+		}
+
+		// Rebuild parent with sorted sections
+		const sortedSection = section.slice(0, matches[0].index) + sections.map(s => s.text).join('\n\n') + '\n';
+
+		// Replace the unsorted section in the file with the new sorted section
+		const newData = data.slice(0, parentStart) + sortedSection + data.slice(parentEnd >= 0 ? parentEnd : data.length);
+
+		await plugin.app.vault.modify(file, newData);
 	}
 };

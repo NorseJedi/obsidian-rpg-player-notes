@@ -1,11 +1,5 @@
 import { App, Modal } from 'obsidian';
-
-export interface TextPromptModalOptions {
-	title?: string;
-	description?: string;
-	placeholder?: string;
-	defaultValue?: string;
-}
+import { TextPromptModalOptions } from '../types/rpg-player-notes';
 
 export class TextPromptModal extends Modal {
 	private resolve!: (value: string | null) => void;

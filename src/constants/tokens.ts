@@ -1,14 +1,4 @@
-export interface ReplacementToken {
-	token: string;
-	description: string;
-	replace: () => string;
-}
-
-export interface UserDefinedToken {
-	token: string;
-	description: string;
-	js: string;
-}
+import { ReplacementToken } from '../types/rpg-player-notes';
 
 export const BUILTIN_TOKENS: ReplacementToken[] = [
 	{

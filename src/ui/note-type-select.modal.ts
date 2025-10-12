@@ -1,5 +1,5 @@
 import { App, FuzzySuggestModal } from 'obsidian';
-import { NoteType } from '../constants/note-type';
+import { NoteType } from '../types/rpg-player-notes';
 
 export class NoteTypeSelectModal extends FuzzySuggestModal<NoteType> {
 	constructor(
@@ -15,7 +15,7 @@ export class NoteTypeSelectModal extends FuzzySuggestModal<NoteType> {
 	}
 
 	getItemText(item: NoteType): string {
-		return item.label;
+		return item.name;
 	}
 
 	onChooseItem(item: NoteType): void {
