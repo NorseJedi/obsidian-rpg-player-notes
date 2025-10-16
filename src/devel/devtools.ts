@@ -1,7 +1,7 @@
 import { Notice, Plugin } from 'obsidian';
 
 /**
- * Initialize developer tools like ribbon buttons, debug commands, etc.
+ * Initialize developer tools. Well... Tool. Singular. So far.
  */
 export function registerDevTools(plugin: Plugin) {
 	plugin.addRibbonIcon('smartphone', 'Toggle mobile mode', () => {

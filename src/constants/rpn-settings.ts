@@ -1,4 +1,4 @@
-import { nanoid } from '../helpers';
+import { nanoid } from '../lib/helpers';
 import { RpnSettings } from '../types/rpg-player-notes';
 
 export const DEFAULT_SETTINGS: RpnSettings = {

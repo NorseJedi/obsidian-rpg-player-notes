@@ -1,8 +1,9 @@
-import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath, TFile, Vault } from 'obsidian';
-import { sectionSortComparators } from './constants/section-sort-comparators';
-import { ensureFolderExists, ensureNoteExists, escapeRegExp, openFileAccordingToSettings, parseNoteTarget } from './helpers';
-import RpgPlayerNotesPlugin from './main';
-import { ComparatorFn, NoteSection, NoteType } from './types/rpg-player-notes';
+import { App, Editor, MarkdownFileInfo, MarkdownView, Notice, normalizePath, TFile, Vault, WorkspaceLeaf } from 'obsidian';
+import { sectionSortComparators } from '../constants/section-sort-comparators';
+import { BUILTIN_TOKENS } from '../constants/tokens';
+import { ensureFolderExists, ensureNoteExists, escapeRegExp } from '../lib/helpers';
+import RpgPlayerNotesPlugin from '../main';
+import { ComparatorFn, NoteSection, NoteType, ParsedNoteTarget, RpnSettings } from '../types/rpg-player-notes';
 
 export const createCompendiumNote = async (plugin: RpgPlayerNotesPlugin, editor: Editor, ctx: MarkdownView | MarkdownFileInfo, title: string, type: NoteType, replaceSelection: boolean) => {
 	const vault = plugin.app.vault;
@@ -118,9 +119,6 @@ const findSectionStart = (data: string, headings: string[], level: number): numb
 };
 
 const findSectionEnd = (data: string, startIndex: number, currentLevel: number): number => {
-	console.log(data);
-	console.log(startIndex);
-	console.log(currentLevel);
 	// Look for next heading of same or higher level
 	const nextHeadingRegex = new RegExp(`^#{1,${currentLevel}}\\s+.+$`, 'm');
 	const substring = data.slice(startIndex + 1);
@@ -131,8 +129,6 @@ const findSectionEnd = (data: string, startIndex: number, currentLevel: number):
 const sortSections = async (plugin: RpgPlayerNotesPlugin, file: TFile, parentHeadings: string[], level: number): Promise<void> => {
 	let data = await plugin.app.vault.read(file);
 	const parentLevel = level - 1;
-	console.log(parentHeadings);
-	console.log(level);
 
 	// Identify parent section boundaries
 
@@ -178,4 +174,88 @@ const sortSections = async (plugin: RpgPlayerNotesPlugin, file: TFile, parentHea
 
 		await plugin.app.vault.modify(file, newData);
 	}
+};
+
+const parseNoteTarget = (plugin: RpgPlayerNotesPlugin, type: NoteType, title: string, currentFile: TFile): ParsedNoteTarget => {
+	let path: string = replaceTokens(type.path, plugin.settings);
+
+	if (!path.startsWith('/')) {
+		// Path is relative to the top folder of the current note
+		path = `${currentFile.path.split('/')[0]}/${path}`;
+	}
+
+	path = normalizePath(path);
+
+	if (!path.contains('#')) {
+		// Just a path to create a new note in
+		return {
+			headings: [],
+			notePath: normalizePath(`${path}/${title}.md`)
+		};
+	}
+	// Any number of #'s in the path denotes that the last directory before the first # is actually a note
+	const dirs = path.substring(0, path.lastIndexOf('/')).split('/');
+
+	const noteParts = path
+		.substring(path.lastIndexOf('/') + 1)
+		.split('#')
+		.filter(Boolean);
+
+	noteParts.push(title);
+
+	const note = noteParts.shift();
+	if (typeof note === 'undefined') {
+		new Notice(`ERROR: The path for note type "${type.name}" is invalid`);
+	}
+
+	return {
+		notePath: normalizePath(`${dirs.join('/')}/${note}.md`),
+		headings: noteParts.map((h) => h.trim())
+	};
+};
+
+const openFileAccordingToSettings = async (plugin: RpgPlayerNotesPlugin, filePath: string) => {
+	const noteFile = plugin.app.vault.getAbstractFileByPath(filePath);
+	if (noteFile instanceof TFile) {
+		let leaf: WorkspaceLeaf;
+		switch (plugin.settings.splitDirection) {
+			case 'horizontal':
+			case 'vertical':
+				leaf = plugin.app.workspace.getLeaf('split', plugin.settings.splitDirection);
+				break;
+			case 'none':
+			default:
+				leaf = plugin.app.workspace.getLeaf(true);
+				break;
+		}
+		await leaf.openFile(noteFile);
+		plugin.app.workspace.setActiveLeaf(leaf, { focus: true });
+	}
+};
+
+export const getAllTokens = (settings: RpnSettings) => {
+	return [
+		...BUILTIN_TOKENS,
+		...settings.userTokens.map((t) => ({
+			token: `{${t.token}}`,
+			description: t.description,
+			replace: () => {
+				try {
+					const fn = new Function(`return ${t.js};`);
+					return String(fn());
+				} catch (e) {
+					console.error(`Error evaluating user token "${t.token}":`, e);
+					return '';
+				}
+			}
+		}))
+	];
+};
+
+const replaceTokens = (path: string, settings: RpnSettings): string => {
+	let result = path;
+	for (const t of getAllTokens(settings)) {
+		result = result.replaceAll(t.token, t.replace());
+	}
+	return result;
 };

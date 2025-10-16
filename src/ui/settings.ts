@@ -1,6 +1,6 @@
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 import { SORTING_MODES } from '../constants/sorting-modes';
-import { nanoid } from '../helpers';
+import { nanoid } from '../lib/helpers';
 import RpgPlayerNotesPlugin from '../main';
 import { NoteType, RpnSectionSortComparer, RpnSplitDirection, UserDefinedToken } from '../types/rpg-player-notes';
 import { EditNoteTypeModal } from './edit-note-type.modal';

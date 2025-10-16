@@ -7,7 +7,6 @@
 	"scripts": {
 		"dev": "pnpm exec vite build --watch --mode=development",
 		"build": "pnpm exec vite build",
-		"version": "node version-bump.mjs && git add manifest.json versions.json",
 		"lint": "pnpm exec biome check",
 		"lint:fix": "pnpm exec biome check --write"
 	},

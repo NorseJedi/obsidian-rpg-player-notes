@@ -1,7 +1,7 @@
 import { Editor, TFile } from 'obsidian';
-import RpgPlayerNotesPlugin from './main';
-import { SelectHeadingModal } from './ui/select-heading-modal';
-import { SelectNoteModal } from './ui/select-note-modal';
+import RpgPlayerNotesPlugin from '../main';
+import { SelectHeadingModal } from '../ui/select-heading-modal';
+import { SelectNoteModal } from '../ui/select-note-modal';
 
 export const linkSelection = async (plugin: RpgPlayerNotesPlugin, editor: Editor) => {
 	const selectedText = editor.getSelection();

@@ -1,8 +1,8 @@
 import { Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian';
+import { createCompendiumNote } from './commands/create-note';
+import { linkSelection } from './commands/link-selection';
 import { DEFAULT_SETTINGS } from './constants/rpn-settings';
-import { createCompendiumNote } from './create-note';
 import { registerDevTools } from './devel/devtools';
-import { linkSelection } from './link-selection';
 import { RpnSettings } from './types/rpg-player-notes';
 import { SelectNoteTypeModal } from './ui/select-note-type.modal';
 import { RpgPlayerNotesSettingsTab } from './ui/settings';
@@ -21,7 +21,7 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'rpgplayernotes-link-selection',
-			name: 'Link selected text to an existing note and/or section',
+			name: 'Link Selected Text',
 			editorCheckCallback: (checking: boolean, editor: Editor) => {
 				const selectedText = editor.getSelection().trim();
 				if (selectedText !== '') {
@@ -63,7 +63,6 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 			}
 		});
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new RpgPlayerNotesSettingsTab(this.app, this));
 	}
 
