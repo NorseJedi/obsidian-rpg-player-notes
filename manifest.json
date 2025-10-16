@@ -1,7 +1,7 @@
 {
 	"id": "rpg-player-notes",
 	"name": "RPG Player Notes",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"minAppVersion": "1.9.14",
 	"description": "Create new notes of predefined types with the selected text as the title, and save the note to a predefined folder based on the type, optionally with replacement tokens. Types, folders and tokens are user configurable.",
 	"author": "Roy W. Andersen",
