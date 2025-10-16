@@ -3,7 +3,7 @@
 	"name": "RPG Player Notes",
 	"version": "0.4.0",
 	"minAppVersion": "1.9.14",
-	"description": "Create new notes of predefined types with the selected text as the title, and save the note to a predefined folder based on the type, optionally with replacement tokens. Types, folders and tokens are user configurable.",
+	"description": "Create notes or sections from selected text, replacing it with a link. Define custom note types with folder or section targets, dynamic tokens, and optional automatic sorting of inserted sections.",
 	"author": "Roy W. Andersen",
 	"authorUrl": "https://github.com/NorseJedi",
 	"license": "MIT",
