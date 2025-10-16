@@ -3,7 +3,7 @@ import RpgPlayerNotesPlugin from '../main';
 import { NoteType } from '../types/rpg-player-notes';
 import { buildPathDescriptionFragment } from './ui-helpers';
 
-export class NoteTypeEditModal extends Modal {
+export class EditNoteTypeModal extends Modal {
 	private temp: NoteType;
 	private onSave: (type: NoteType) => void;
 

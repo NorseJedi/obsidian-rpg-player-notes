@@ -2,8 +2,9 @@ import { Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian
 import { DEFAULT_SETTINGS } from './constants/rpn-settings';
 import { createCompendiumNote } from './create-note';
 import { registerDevTools } from './devel/devtools';
+import { linkSelection } from './link-selection';
 import { RpnSettings } from './types/rpg-player-notes';
-import { NoteTypeSelectModal } from './ui/note-type-select.modal';
+import { SelectNoteTypeModal } from './ui/select-note-type.modal';
 import { RpgPlayerNotesSettingsTab } from './ui/settings';
 import { TextPromptModal } from './ui/text-prompt.modal';
 
@@ -17,6 +18,21 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 		if (DEV) {
 			registerDevTools(this);
 		}
+
+		this.addCommand({
+			id: 'rpgplayernotes-link-selection',
+			name: 'Link selected text to an existing note and/or section',
+			editorCheckCallback: (checking: boolean, editor: Editor) => {
+				const selectedText = editor.getSelection().trim();
+				if (selectedText !== '') {
+					if (!checking) {
+						linkSelection(this, editor);
+					}
+					return true;
+				}
+				return false;
+			}
+		});
 
 		this.addCommand({
 			id: 'rpgplayernotes-create-new-note',
@@ -39,7 +55,7 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 				}
 
 				if (title) {
-					new NoteTypeSelectModal(this, Object.values(this.settings.noteTypes), async (type) => {
+					new SelectNoteTypeModal(this, Object.values(this.settings.noteTypes), async (type) => {
 						await this.saveSettings();
 						await createCompendiumNote(this, editor, ctx, title, type, replaceSelection);
 					}).open();

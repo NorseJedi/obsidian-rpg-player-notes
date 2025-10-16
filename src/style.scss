@@ -1,3 +1,17 @@
+
+.linktarget-sub,
+.heading-sub {
+	font-size: 0.8em;
+	color: var(--text-muted);
+	margin-left: 0.5em;
+}
+
+.linktarget-item,
+.heading-item {
+	padding: 4px 0;
+}
+
+
 dl > dt > dd {
 	margin-bottom: .5rem;
 }

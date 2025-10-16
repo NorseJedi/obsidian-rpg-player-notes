@@ -2,7 +2,7 @@ import { Modal, Notice, Setting } from 'obsidian';
 import RpgPlayerNotesPlugin from '../main';
 import { UserDefinedToken } from '../types/rpg-player-notes';
 
-export class UserTokenModal extends Modal {
+export class EditUserTokenModal extends Modal {
 	private onSave: (type: UserDefinedToken) => void;
 
 	constructor(

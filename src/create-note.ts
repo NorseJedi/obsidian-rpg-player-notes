@@ -118,6 +118,9 @@ const findSectionStart = (data: string, headings: string[], level: number): numb
 };
 
 const findSectionEnd = (data: string, startIndex: number, currentLevel: number): number => {
+	console.log(data);
+	console.log(startIndex);
+	console.log(currentLevel);
 	// Look for next heading of same or higher level
 	const nextHeadingRegex = new RegExp(`^#{1,${currentLevel}}\\s+.+$`, 'm');
 	const substring = data.slice(startIndex + 1);
@@ -128,6 +131,8 @@ const findSectionEnd = (data: string, startIndex: number, currentLevel: number):
 const sortSections = async (plugin: RpgPlayerNotesPlugin, file: TFile, parentHeadings: string[], level: number): Promise<void> => {
 	let data = await plugin.app.vault.read(file);
 	const parentLevel = level - 1;
+	console.log(parentHeadings);
+	console.log(level);
 
 	// Identify parent section boundaries
 

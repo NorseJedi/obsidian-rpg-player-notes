@@ -2,7 +2,7 @@ import { FuzzySuggestModal } from 'obsidian';
 import RpgPlayerNotesPlugin from '../main';
 import { NoteType } from '../types/rpg-player-notes';
 
-export class NoteTypeSelectModal extends FuzzySuggestModal<NoteType> {
+export class SelectNoteTypeModal extends FuzzySuggestModal<NoteType> {
 	constructor(
 		private plugin: RpgPlayerNotesPlugin,
 		private noteTypes: NoteType[],

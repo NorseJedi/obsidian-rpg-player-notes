@@ -3,8 +3,8 @@ import { SORTING_MODES } from '../constants/sorting-modes';
 import { nanoid } from '../helpers';
 import RpgPlayerNotesPlugin from '../main';
 import { NoteType, RpnSectionSortComparer, RpnSplitDirection, UserDefinedToken } from '../types/rpg-player-notes';
-import { NoteTypeEditModal } from './edit-note-type.modal';
-import { UserTokenModal } from './edit-user-token.modal';
+import { EditNoteTypeModal } from './edit-note-type.modal';
+import { EditUserTokenModal } from './edit-user-token.modal';
 import { NoteTypeUsageStatsModal } from './note-type-usage-stats.modal';
 
 export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
@@ -205,7 +205,7 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 		const { noteTypes } = this.plugin.settings;
 		const existing = index != null ? noteTypes[index] : { id: nanoid(), name: '', path: '' };
 
-		const modal = new NoteTypeEditModal(this.plugin, existing, async (updated) => {
+		const modal = new EditNoteTypeModal(this.plugin, existing, async (updated) => {
 			if (index != null) {
 				noteTypes[index] = updated;
 			} else {
@@ -227,7 +227,7 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 		const { userTokens } = this.plugin.settings;
 		const existing = index != null ? userTokens[index] : { token: '', description: '', js: '' };
 
-		const modal = new UserTokenModal(this.plugin, existing, async (updated) => {
+		const modal = new EditUserTokenModal(this.plugin, existing, async (updated) => {
 			if (index != null) {
 				userTokens[index] = updated;
 			} else {

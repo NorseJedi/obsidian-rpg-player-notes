@@ -1,4 +1,4 @@
-import { SplitDirection } from 'obsidian';
+import { SplitDirection, TFile } from 'obsidian';
 
 export type RpnSplitDirection = SplitDirection | 'none';
 export type RpnSectionSortComparer = 'caseSensitive' | 'caseInsensitive' | 'natural' | 'ignoreArticles' | 'custom';
@@ -54,4 +54,9 @@ export type NoteSection = {
 export type SortingMode = {
 	value: string;
 	display: string;
+};
+
+export type LinkTarget = {
+	note: TFile;
+	label: string;
 };
