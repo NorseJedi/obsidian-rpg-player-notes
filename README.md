@@ -8,6 +8,7 @@ There may be way more advanced plugins around that can replicate this functional
 This plugin adds the following commands to the Obsidian command palette:
 * `RPG Player Notes: Create New Note`
 * `RPG Player Notes: Link Selected Text`
+* `RPG Player Notes: Sort Section`
 
 Each are described below.
 
@@ -48,6 +49,8 @@ In addition, you can define your own tokens in the plugin settings. You set the 
 By default, the plugin will keep the sections that you add new notes in to be kept sorted. This will reorder all the sections on the same level every time you add a new section using this command.
 
 This can be disabled in the plugin settings.
+
+Note: Sorting can also be performed manually using the `Sort Section` command. See below.
 
 ### Note Type Sorting
 When you run the command, the first thing you get is a modal that lets you choose the type of note you want to create (well, ok, it's the second thing you get if you didn't have any text selected). This list is sorted alphabetically at first, but as you create more notes, the types you select the most will go to the top of the list. It's a very simple mechanism that simply adds 1 to the counter for each note type as you select them and then uses this counter to sort the list. I know the concept of "tracking" can conjure up some mistrust in this digital age, and perhaps rightfully so, but it's all stored in your vault and you can easily reset all the counters.
@@ -113,6 +116,10 @@ Select the word(s) you want to turn into a link and run the command. You will th
 
 ### But... why?
 I find it useful to be able to quickly create links to other notes and sections, and Obsidian has no way to do this. The alternative is to remove the word you want as a link and then re-add it as a link. If you're editing an already written document to add links, this is a very impractical way of doing it.
+
+## Command: Sort Section
+This command lets you sort the current sections of the current note. The section being sorted is the section level that the cursor is at. This means it will find the closest header above the cursor, and sort all headers on that level, but not headers above or below that level.
+The sorting will be done using the sorting method selected in the plugin settings.
 
 # Plugin Settings
 The plugin settings can be found in the Obsidian settings under Community Plugins, RPG Player Notes. They should be fairly self-explanatory, but here is a breakdown:

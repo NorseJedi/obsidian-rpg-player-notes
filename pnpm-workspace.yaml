@@ -1,4 +1,8 @@
 onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - dprint
   - electron
   - esbuild
   - obsidian-typings
+  - svelte-preprocess
+  - unrs-resolver

@@ -1,6 +1,7 @@
+import { nanoid } from '../lib/helpers';
 import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
 import { SORTING_MODES } from '../constants/sorting-modes';
-import { nanoid } from '../lib/helpers';
+
 import RpgPlayerNotesPlugin from '../main';
 import { NoteType, RpnSectionSortComparer, RpnSplitDirection, UserDefinedToken } from '../types/rpg-player-notes';
 import { EditNoteTypeModal } from './edit-note-type.modal';
@@ -59,13 +60,12 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 				toggle.setValue(this.plugin.settings.keepNoteSectionsSorted).onChange(async (value) => {
 					this.plugin.settings.keepNoteSectionsSorted = value;
 					await this.plugin.saveSettings();
-					showHideSortingMode(value);
 				});
 			});
 
-		const sortingModeSetting = new Setting(containerEl)
+		new Setting(containerEl)
 			.setName('Sorting mode')
-			.setDesc('Choose how section headers are compared when sorting. The sorting is done alphabetically on the section header.')
+			.setDesc('Choose how section headers are compared when sorting. The sorting is done on the section header.')
 			.addDropdown((dropdown) => {
 				for (const option of SORTING_MODES) {
 					dropdown.addOption(option.value, option.display);
@@ -97,16 +97,10 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 				})
 			);
 
-		const showHideSortingMode = (show: boolean) => {
-			sortingModeSetting.settingEl.style.display = show ? '' : 'none';
-			sortingRegexSetting.settingEl.style.display = show && this.plugin.settings.sortingMode === 'custom' ? '' : 'none';
-		};
-
 		const showHideSortRegexpSetting = (mode: RpnSectionSortComparer) => {
 			sortingRegexSetting.settingEl.style.display = mode === 'custom' ? '' : 'none';
 		};
 
-		showHideSortingMode(this.plugin.settings.keepNoteSectionsSorted);
 		showHideSortRegexpSetting(this.plugin.settings.sortingMode);
 
 		new Setting(containerEl)
@@ -129,10 +123,7 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl).setName('Note types').setHeading();
 
-		const noteTypesList = Object.values(this.plugin.settings.noteTypes);
-		noteTypesList.sort((a, b) => a.name.localeCompare(b.name));
-
-		noteTypesList.forEach((type: NoteType, index: number) => {
+		this.plugin.settings.noteTypes.forEach((type: NoteType, index: number) => {
 			const typeSetting = new Setting(containerEl).setName(`${type.name}`).setDesc(`Path: ${type.path}`);
 
 			typeSetting.addButton((btn) =>
@@ -216,6 +207,7 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 				}
 				this.plugin.settings.noteTypes.push(updated);
 			}
+			this.plugin.settings.noteTypes.sort((a, b) => a.name.localeCompare(b.name));
 			await this.plugin.saveSettings();
 			this.display();
 		});

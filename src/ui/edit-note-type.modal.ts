@@ -1,5 +1,5 @@
 import { Modal, Notice, Setting } from 'obsidian';
-import { getAllTokens } from '../commands/create-note';
+import { getAllTokens } from '../lib/helpers';
 import RpgPlayerNotesPlugin from '../main';
 import { NoteType } from '../types/rpg-player-notes';
 

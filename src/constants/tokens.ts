@@ -48,6 +48,16 @@ export const BUILTIN_TOKENS: ReplacementToken[] = [
 	}
 ];
 
+/**
+ * Calculates the ISO 8601 week number of the specified date.
+ *
+ * The function determines the week number by using the ISO 8601 standard,
+ * where weeks start on Monday and the first week of the year contains the
+ * first Thursday of the year.
+ *
+ * @param {Date} date - The date for which the week number needs to be calculated.
+ * @returns {string} The ISO week number of the given date as a string.
+ */
 const getWeekNumber = (date: Date): string => {
 	// Copying date so the original date won't be modified
 	const tempDate = new Date(date.valueOf());

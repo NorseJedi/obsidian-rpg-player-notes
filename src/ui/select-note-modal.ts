@@ -28,7 +28,7 @@ export class SelectNoteModal extends FuzzySuggestModal<TFile> {
 			cls: 'linktarget-title'
 		});
 
-		// Path (smaller, gray text)
+		// Path (smaller, grey text)
 		container.createDiv({
 			text: file.path.replace(file.name, ''),
 			cls: 'linktarget-sub'

@@ -1,6 +1,7 @@
 import { Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian';
-import { createCompendiumNote } from './commands/create-note';
-import { linkSelection } from './commands/link-selection';
+import { CompendiumNote } from './commands/compendium-note';
+import { LinkSelection } from './commands/link-selection';
+import { SectionSorter } from './commands/section-sorter';
 import { DEFAULT_SETTINGS } from './constants/rpn-settings';
 import { registerDevTools } from './devel/devtools';
 import { RpnSettings } from './types/rpg-player-notes';
@@ -26,11 +27,20 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 				const selectedText = editor.getSelection().trim();
 				if (selectedText !== '') {
 					if (!checking) {
-						linkSelection(this, editor);
+						new LinkSelection(this, editor).link();
 					}
 					return true;
 				}
 				return false;
+			}
+		});
+
+		this.addCommand({
+			id: 'rpgplayernotes-sort-section',
+			name: 'Sort Section',
+			editorCallback: async (editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
+				const sorter = new SectionSorter(this);
+				await sorter.sortSections(ctx.file!, { lineNumber: editor.getCursor().line });
 			}
 		});
 
@@ -57,7 +67,7 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 				if (title) {
 					new SelectNoteTypeModal(this, Object.values(this.settings.noteTypes), async (type) => {
 						await this.saveSettings();
-						await createCompendiumNote(this, editor, ctx, title, type, replaceSelection);
+						await new CompendiumNote(this, editor, ctx, title, type, replaceSelection).create();
 					}).open();
 				}
 			}
