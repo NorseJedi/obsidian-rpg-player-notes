@@ -111,6 +111,18 @@ export class SectionSorter {
 			return lines;
 		}
 
+		// Remove all empty lines at the end after the first.
+		sections.forEach((s) => {
+			// Find the last non-empty line in the section content.
+			let i = s.content.length - 1;
+			while (i >= 0 && s.content[i].trim() === '') {
+				i--;
+			}
+			// Keep content up to the last non-empty line, then add one empty line.
+			s.content = s.content.slice(0, i + 1);
+			s.content.push('');
+		});
+
 		if (compareFn != null) {
 			sections.sort((a, b) => compareFn(a.heading, b.heading));
 		} else if (this.plugin.settings.sortingMode === 'custom' && this.plugin.settings.customSortingRegex) {
