@@ -1,6 +1,6 @@
 # RPG Player Notes Plugin for Obsidian.md
 
-This is a plugin for [Obsidian.md](https://obsidian.md/) meant for RPG players for taking notes during game sessions, but I'm sure it can be used for other purposes as well.
+This is an [Obsidian.md](https://obsidian.md/) plugin made primarily for taking notes during RPG sessions, but I'm sure it can be used for other purposes as well.
 There may be way more advanced plugins around that can replicate this functionality. However, I decided to write my own, both because I couldn't find another one to do what I want and because I wanted to figure out how to write Obsidian plugins. As I've found it very helpful for my own use, I decided to share in case someone else might find it useful as well.
 
 # Features
@@ -10,7 +10,7 @@ This plugin adds the following commands to the Obsidian command palette:
 * `RPG Player Notes: Link Selected Text`
 * `RPG Player Notes: Sort Section`
 
-Each are described below.
+Each is described below.
 
 ## Command: Create New Note
 This command will create a new note with the text you've selected as the title (if no text is selected, you will be prompted for a title instead).
@@ -23,7 +23,7 @@ You can use tokens in the path to have them dynamically replaced when the new no
 ### Note Type Paths
 A path can point to either a folder, a note or a section within a note. This determines where and how the new note is created.
 * If the path points to a folder, the new note will be created in that folder.
-* If the path points to a note, the new note will be created as a H1 section in that note.
+* If the path points to a note, the new note will be created as an H1 section in that note.
 * If the path points to a section within a note, the new note will be created as a subsection in that section (i.e. if the target is an H2 section, the new note will be created as an H3 section).
 
 Any folder, note, or header that doesn't exist in the path when a new note is created will be created automatically.
@@ -53,7 +53,7 @@ This can be disabled in the plugin settings.
 Note: Sorting can also be performed manually using the `Sort Section` command. See below.
 
 ### Note Type Sorting
-When you run the command, the first thing you get is a modal that lets you choose the type of note you want to create (well, ok, it's the second thing you get if you didn't have any text selected). This list is sorted alphabetically at first, but as you create more notes, the types you select the most will go to the top of the list. It's a very simple mechanism that simply adds 1 to the counter for each note type as you select them and then uses this counter to sort the list. I know the concept of "tracking" can conjure up some mistrust in this digital age, and perhaps rightfully so, but it's all stored in your vault and you can easily reset all the counters.
+When you run the command, the first thing you get is a modal that lets you choose the type of note you want to create. (Well, OK, it's the second thing you get if you didn't have any text selected.) This list is sorted alphabetically at first, but as you create more notes, the types you select the most will go to the top of the list. It's a basic mechanism that simply adds 1 to the counter for each note type as you select them and then uses this counter to sort the list. I know the concept of "tracking" can conjure up some mistrust in this digital age, and perhaps rightfully so, but it's all stored in your vault, and you can reset all the counters in the plugin settings.
 
 This can be disabled in the plugin settings, and disabling this sorting will also disable the usage tracking. In the settings you can also see the number each type has been selected. You can also reset the counters there if you wish.
 
@@ -63,7 +63,7 @@ This can be disabled in the plugin settings, and disabling this sorting will als
 * `Compendium/People/NPCs#Nobles#` will create an H2 header in the `Compendium/People/NPCs` note under the `Nobles` H1 header.
 
 ### But... why?
-I like making notes when I play, primarily to make it easier to remember what happened on previous sessions and to assist in the infamous recap that most sessions begin with. As campaigns go on, there are a lot of things that appear and reappear in these notes, be it people, events, places, etc. and making separate notes for these and linking to them makes it so much easier to keep track. Personally I like to have a dedicated vault for these kinds of notes rather than separate vaults for each campaign. My vault structure looks something like this:
+I like making notes when I play, primarily to make it easier to remember what happened in previous sessions and to help with the infamous recap that most sessions begin with. As campaigns go on, there are a lot of things that appear and reappear in these notes, be it people, events, places, etc. and making separate notes for these and linking to them makes it so much easier to keep track. Personally, I like to have a dedicated vault for these kinds of notes rather than separate vaults for each campaign. My vault structure looks something like this:
 ```
 Vault Root
 ├── Dark Sun 2E
@@ -124,16 +124,16 @@ The sorting will be done using the sorting method selected in the plugin setting
 # Plugin Settings
 The plugin settings can be found in the Obsidian settings under Community Plugins, RPG Player Notes. They should be fairly self-explanatory, but here is a breakdown:
 
-| Setting                        | Description                                                                                                                                                                                                                                                                                                                           |
-|--------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Open new note after creation` | If off, the new note will be created in stealth mode. That is, it won't open for you to edit it. I personally can't think why anyone would want this, but I always choose more options over less even I myself don't see the need.                                                                                                    |
-| `Split direction`              | Only available if `Open new note after creation` is on. This selects where the new note should open - split tab below current tab, split tab to the right of current tab, or as a new tab alongside the current tab.                                                                                                                  |
-| `Keep sections sorted`         | This turns on or off the automatic sorting of sections that is done for notes added as sections to existing notes.                                                                                                                                                                                                                    |
-| `Sorting mode`                 | Only available if `Keep sections sorted` is on. Chooses how the sections are sorted.                                                                                                                                                                                                                                                  |
-| `Custom sorting regex`         | Only available if `Sorting mode` is set to `Sort by custom RegExp`. Here you can write your own regular expression that will be used as the sorting method of the sections.                                                                                                                                                           |
+| Setting                        | Description                                                                                                                                                                                                                                                                                                                            |
+|--------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Open new note after creation` | If off, the new note will be created in stealth mode. That is, it won't open for you to edit it. I personally can't think why anyone would want this, but I always choose more options over less even I myself don't see the need.                                                                                                     |
+| `Split direction`              | Only available if `Open new note after creation` is on. This selects where the new note should open - split tab below current tab, split tab to the right of current tab, or as a new tab alongside the current tab.                                                                                                                   |
+| `Keep sections sorted`         | This turns on or off the automatic sorting of sections that is done for notes added as sections to existing notes.                                                                                                                                                                                                                     |
+| `Sorting mode`                 | Only available if `Keep sections sorted` is on. Chooses how the sections are sorted.                                                                                                                                                                                                                                                   |
+| `Custom sorting regex`         | Only available if `Sorting mode` is set to `Sort by custom RegExp`. Here you can write your own regular expression that will be used as the sorting method of the sections.                                                                                                                                                            |
 | `Sort note types by usage`     | This will sort the list of note types in the modal by the number of times each note type has been selected, so that the ones you use more often are higher on the list. If off they will be sorted alphabetically. There is also a button here you can click to see the current usage tracking, and reset the counters if you want to. |
-| `Note types`                   | Here you can define your own note types with name and path. The modal for setting up each type should contain all the relevant help concerning paths and tokens.                                                                                                                                                                      |
-| `Custom tokens`                | Here you can add or delete your own tokens.                                                                                                                                                                                                                                                                                           |
+| `Note types`                   | Here you can define your own note types with name and path. The modal for setting up each type should contain all the relevant help concerning paths and tokens.                                                                                                                                                                       |
+| `Custom tokens`                | Here you can add or delete your own tokens.                                                                                                                                                                                                                                                                                            |
 
 
 # Contributing
