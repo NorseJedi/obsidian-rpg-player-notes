@@ -22,9 +22,9 @@
 	"homepage": "https://github.com/NorseJedi/obsidian-rpg-player-notes",
 	"license": "MIT",
 	"devDependencies": {
-		"@biomejs/biome": "^2.2.6",
+		"@biomejs/biome": "^2.2.7",
 		"@codemirror/language": "^6.11.3",
-		"@types/node": "^24.9.0",
+		"@types/node": "^24.9.1",
 		"builtin-modules": "^5.0.0",
 		"obsidian": "^1.10.0",
 		"obsidian-dev-utils": "^43.5.0",
