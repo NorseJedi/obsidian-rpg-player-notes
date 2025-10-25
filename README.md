@@ -123,6 +123,15 @@ I find it useful to be able to quickly create links to other notes and sections,
 This command lets you sort the current sections of the current note. The section being sorted is the section level that the cursor is at. This means it will find the closest header above the cursor, and sort all headers on that level, but not headers above or below that level.
 The sorting will be done using the sorting method selected in the plugin settings.
 
+## Command: Update Session Note Navigation (current file) / Update Session Notes Navigation (current folder)
+This command will create or update navigation links at the bottom of your session notes. One will do this for all notes in the same folder as the current file, the other just the current file.
+
+The way this works is that it will look for the previous and next note in the folder based on the note title. The notes have to begin with a date (or time) in a format that you can configure in the plugin settings, defaulting to ISO-8601 (YYYY-MM-DD). The command will then add links to the previous and next note at the bottom of the note(s). If no previous or next note exists, it will show this instead of a link as "*(No previous note)*" or "*(No next note)*".
+
+If there are already such links in the note, they will be updated in case new notes have been added. It will only find the existing links if there is nothing after them in the note except whitespace. If you add more text below existing links, the command will add new links at the bottom of the note instead.
+
+You can set the link text in the plugin settings. The default is "← Previous Session" and "Next Session →". If you set them to blank, the target note title will be used.
+
 # Plugin Settings
 The plugin settings can be found in the Obsidian settings under Community Plugins, RPG Player Notes. They should be fairly self-explanatory, but here is a breakdown:
 
@@ -136,16 +145,6 @@ The plugin settings can be found in the Obsidian settings under Community Plugin
 | `Sort note types by usage`     | This will sort the list of note types in the modal by the number of times each note type has been selected, so that the ones you use more often are higher on the list. If off they will be sorted alphabetically. There is also a button here you can click to see the current usage tracking, and reset the counters if you want to. |
 | `Note types`                   | Here you can define your own note types with name and path. The modal for setting up each type should contain all the relevant help concerning paths and tokens.                                                                                                                                                                       |
 | `Custom tokens`                | Here you can add or delete your own tokens.                                                                                                                                                                                                                                                                                            |
-
-## Command: Update Session Note Navigation (current file) / Update Session Notes Navigation (current folder)
-This command will create or update navigation links at the bottom of your session notes. One will do this for all notes in the same folder as the current file, the other just the current file.
-
-The way this works is that it will look for the previous and next note in the folder based on the note title. The notes have to begin with a date (or time) in a format that you can configure in the plugin settings, defaulting to ISO-8601 (YYYY-MM-DD). The command will then add links to the previous and next note at the bottom of the note(s). If no previous or next note exists, it will show this instead of a link as "*(No previous note)*" or "*(No next note)*".
-
-If there are already such links in the note, they will be updated in case new notes have been added. It will only find the existing links if there is nothing after them in the note except whitespace. If you add more text below existing links, the command will add new links at the bottom of the note instead.
-
-You can set the link text in the plugin settings. The default is "← Previous Session" and "Next Session →". If you set them to blank, the target note title will be used.
-
 
 # Contributing
 ## Getting Started
