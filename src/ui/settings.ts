@@ -187,7 +187,7 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 				.onClick(() => this.editTokenModal())
 		);
 
-		new Setting(containerEl).setName('Session navigation links').setHeading().setDesc('Settings for the session navigation links.');
+		new Setting(containerEl).setName('Session navigation links').setHeading();
 
 		new Setting(containerEl)
 			.setName('Session note date format')
