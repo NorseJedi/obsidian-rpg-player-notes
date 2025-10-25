@@ -1,7 +1,7 @@
 {
 	"id": "rpg-player-notes",
 	"name": "RPG Player Notes",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"minAppVersion": "1.9.14",
 	"description": "Create notes or sections from selected text and replace it with a link. Define custom note types with folder or section targets, use tokens for dynamic paths, and optionally keep sections sorted automatically.",
 	"author": "Roy W. Andersen",
