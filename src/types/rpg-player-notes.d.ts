@@ -1,4 +1,4 @@
-import { SplitDirection } from 'obsidian';
+import { SplitDirection, TFile } from 'obsidian';
 
 export type RpnSplitDirection = SplitDirection | 'none';
 export type RpnSectionSortComparer = 'caseSensitive' | 'caseInsensitive' | 'natural' | 'ignoreArticles' | 'custom';
@@ -31,6 +31,9 @@ export type RpnSettings = {
 	sortNoteTypeListByUsage: boolean;
 	noteTypeUsage: Record<string, number>;
 	userTokens: UserDefinedToken[];
+	sessionNoteDateFormat: string;
+	nextSessionLabel: string;
+	prevSessionLabel: string;
 };
 
 export type TextPromptModalOptions = {
@@ -53,4 +56,9 @@ export type NoteSection = {
 export type SortingMode = {
 	value: string;
 	display: string;
+};
+
+export type AdjacentNotes = {
+	next: TFile | null;
+	prev: TFile | null;
 };

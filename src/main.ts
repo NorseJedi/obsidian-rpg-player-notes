@@ -2,6 +2,7 @@ import { Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian
 import { CompendiumNote } from './commands/compendium-note';
 import { LinkSelection } from './commands/link-selection';
 import { SectionSorter } from './commands/section-sorter';
+import { SessionNavLinks } from './commands/session-nav-links';
 import { DEFAULT_SETTINGS } from './constants/rpn-settings';
 import { registerDevTools } from './devel/devtools';
 import { RpnSettings } from './types/rpg-player-notes';
@@ -19,6 +20,24 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 		if (DEV) {
 			registerDevTools(this);
 		}
+
+		this.addCommand({
+			id: 'rpgplayernotes-update-session-nav-file',
+			name: 'Update Session Note Navigation (current file)',
+			editorCallback: async (_: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
+				const navlinks = new SessionNavLinks(this);
+				await navlinks.create(ctx.file);
+			}
+		});
+
+		this.addCommand({
+			id: 'rpgplayernotes-update-session-nav-folder',
+			name: 'Update Session Notes Navigation (current folder)',
+			editorCallback: async () => {
+				const navlinks = new SessionNavLinks(this);
+				await navlinks.createAll(this.app.workspace.getActiveFile()?.parent?.path);
+			}
+		});
 
 		this.addCommand({
 			id: 'rpgplayernotes-link-selection',

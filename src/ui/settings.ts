@@ -1,6 +1,6 @@
-import { nanoid } from '../lib/helpers';
-import { App, Notice, PluginSettingTab, Setting } from 'obsidian';
+import { App, moment, Notice, PluginSettingTab, Setting } from 'obsidian';
 import { SORTING_MODES } from '../constants/sorting-modes';
+import { nanoid } from '../lib/helpers';
 
 import RpgPlayerNotesPlugin from '../main';
 import { NoteType, RpnSectionSortComparer, RpnSplitDirection, UserDefinedToken } from '../types/rpg-player-notes';
@@ -186,6 +186,42 @@ export class RpgPlayerNotesSettingsTab extends PluginSettingTab {
 				.setCta()
 				.onClick(() => this.editTokenModal())
 		);
+
+		new Setting(containerEl).setName('Session navigation links').setHeading().setDesc('Settings for the session navigation links.');
+
+		new Setting(containerEl)
+			.setName('Session note date format')
+			.setDesc(
+				'The date format used for the session note links. See https://momentjs.com/docs/#/displaying/format/ for more information. All session notes must begin with this date format if they are to be recognised as session notes, but can have any text after the date. The default is ISO-8601 (YYYY-MM-DD).'
+			)
+			.addText((text) =>
+				text.setValue(this.plugin.settings.sessionNoteDateFormat).onChange((value) => {
+					const testDate = moment(moment().format(value.trim()));
+					if (testDate.isValid()) {
+						this.plugin.settings.sessionNoteDateFormat = value.trim();
+					} else {
+						new Notice('Invalid date format');
+					}
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Previous session link label')
+			.setDesc('The label for the link to the previous session note. If blank, the note name will be used.')
+			.addText((text) =>
+				text.setValue(this.plugin.settings.prevSessionLabel).onChange((value) => {
+					this.plugin.settings.prevSessionLabel = value;
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Next session link label')
+			.setDesc('The label for the link to the next session note. If blank, the note name will be used.')
+			.addText((text) =>
+				text.setValue(this.plugin.settings.nextSessionLabel).onChange((value) => {
+					this.plugin.settings.nextSessionLabel = value;
+				})
+			);
 	}
 
 	private openUsageStatisticsModal() {

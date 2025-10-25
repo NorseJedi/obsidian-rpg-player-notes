@@ -10,6 +10,9 @@ export const DEFAULT_SETTINGS: RpnSettings = {
 	userTokens: [],
 	sortNoteTypeListByUsage: true,
 	noteTypeUsage: {},
+	sessionNoteDateFormat: 'YYYY-MM-DD',
+	nextSessionLabel: 'Next Session →',
+	prevSessionLabel: '← Previous Session',
 	noteTypes: [
 		{ id: nanoid(), name: 'Person', path: 'Compendium/People' },
 		{ id: nanoid(), name: 'Location', path: 'Compendium/Locations' },
