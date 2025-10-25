@@ -1,4 +1,4 @@
-import { normalizePath, TFile, Vault } from 'obsidian';
+import { moment, normalizePath, TFile, Vault } from 'obsidian';
 import { BUILTIN_TOKENS } from '../constants/tokens';
 import { ReplacementToken, RpnSettings } from '../types/rpg-player-notes';
 
@@ -128,3 +128,25 @@ export const replaceTokens = (path: string, settings: RpnSettings): string => {
 	}
 	return result;
 };
+
+export const getStringAsMoment = (str: string, dateFormat?: string): moment.Moment | null => {
+	let parsed: moment.Moment | null = null;
+
+	for (let i = str.length; i > 0; i--) {
+		const substring = str.substring(0, i);
+		let m: moment.Moment;
+
+		if (!dateFormat) {
+			m = moment(substring, true);
+		} else {
+			m = moment(substring, dateFormat, true);
+		}
+
+		if (m.isValid()) {
+			parsed = m;
+			break;
+		}
+	}
+
+	return parsed;
+}

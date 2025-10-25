@@ -1,4 +1,5 @@
 import { moment, Notice, normalizePath, TFile } from 'obsidian';
+import { getStringAsMoment } from '../lib/helpers';
 import RpgPlayerNotesPlugin from '../main';
 import { AdjacentNotes } from '../types/rpg-player-notes';
 
@@ -75,17 +76,7 @@ export class SessionNavLinks {
 		const datedFiles: { file: TFile; date: moment.Moment }[] = [];
 
 		for (const file of files) {
-			let parsed: moment.Moment | null = null;
-
-			for (let i = file.basename.length; i > 0; i--) {
-				const substring = file.basename.substring(0, i);
-				const m = moment(substring, this.dateFormat, true);
-				if (m.isValid()) {
-					parsed = m;
-					break;
-				}
-			}
-
+			const parsed = getStringAsMoment(file.basename, this.dateFormat);
 			if (parsed) {
 				datedFiles.push({ file, date: parsed });
 			}

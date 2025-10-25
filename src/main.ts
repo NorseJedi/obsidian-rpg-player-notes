@@ -1,4 +1,5 @@
 import { Editor, MarkdownFileInfo, MarkdownView, Notice, Plugin } from 'obsidian';
+import { CampaignIndex } from './commands/campaign-index';
 import { CompendiumNote } from './commands/compendium-note';
 import { LinkSelection } from './commands/link-selection';
 import { SectionSorter } from './commands/section-sorter';
@@ -20,6 +21,21 @@ export default class RpgPlayerNotesPlugin extends Plugin {
 		if (DEV) {
 			registerDevTools(this);
 		}
+
+		this.addCommand({
+			id: 'rpgplayernotes-update-index',
+			name: 'Update Campaign Index',
+			editorCheckCallback: (checking: boolean, _: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
+				if (ctx.file !== null) {
+					if (!checking) {
+						const campaignIndex = new CampaignIndex(this);
+						campaignIndex.create(ctx.file);
+					}
+					return true;
+				}
+				return false;
+			}
+		});
 
 		this.addCommand({
 			id: 'rpgplayernotes-update-session-nav-file',
